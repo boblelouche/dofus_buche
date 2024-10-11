@@ -1,0 +1,4 @@
+photo/*
+temp/*
+.venv/*
+__pycache__/
