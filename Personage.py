@@ -1,6 +1,16 @@
+import pyautogui
+import time
+import win32api
+import time
 from config import *
+import keyboard
+from os import path, listdir
+from json_utility import write_json
+import json
+from utility import *
+from Dd import Monture
 
-class Personage:
+class Personnage:
     def __init__(self, name, PA, PM, sort, lvl, position, classe, metier):
         self.PA = PA
         self.PM = PM
@@ -12,10 +22,177 @@ class Personage:
         self.metier = metier
         self.inventory_full = 0
         self.inventory_open = 0
-
+        # self.dd_full = 0
+        self.monture = None
+    
+    def get_screenshot_region(self, region):
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            time.sleep(1)
+            i=0
+            # pyautogui.click(position['first_ressource'])
+            # time.sleep(2)
+            screenshot = path.join(temp_folder,f'screenshot_{i}.png')
+            pyautogui.screenshot(imageFilename=screenshot, region=region, allScreens=False)
+            
+    def get_screenshot_first_ressouce(self):
+        self.get_screenshot_region((1284,318,43,40))
 
     def get_position(self):
         print('todo')
+    
+ 
+    def go_brak_bank(self):
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            self.use_brak_popo()
+            time.sleep(3)
+        # print(position_brak_zapi_milice)
+            click_and_confirme_absolute(position["brak_zapi_milice"])
+            time.sleep(3)
+            pyautogui.click(position["active_zapy_divers"])
+            try:
+                click_on_picture(zapy_divers_desactivate_picture)
+                time.sleep(1)
+            except:
+                print("already activate")
+            click_on_picture(zapy_bank)
+            time.sleep(1)
+            pyautogui.click(position["enter_brak_bank"])
+            time.sleep(3)
+            pyautogui.click(position["brak_bankier"])
+            time.sleep(1)
+            pyautogui.click((position["brak_bankier"][0]+10,position["brak_bankier"][1]+11))
+            time.sleep(1)
+            pyautogui.click(position["open_chest"])
+            time.sleep(0.5)
 
-Iro = Personage("Ironamo", 8, 3, "test", 86, [-23,38], "enutrof", ["bucheron" ,"mineur"])
-Lea = Personage("Laestra", 6, 3, "test", 52, [-25,17], "iop", ["Bijoutier"])
+
+    def vider_ressource_on_bank(self):
+        first_ressource_empty = get_pixel_color_on_pos(position['first_ressource']) == couleur_inventory_no_ressource
+        second_ressource_empty = get_pixel_color_on_pos(position['second_ressource'])  == couleur_inventory_no_ressource
+        print(first_ressource_empty, second_ressource_empty )
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            try:    
+                click_on_picture(path.join(pict_folder,"inventaire_ressource_desactivate.png"),region=region_inventory)
+                time.sleep(2)
+            except:
+                print("divers already activate")  
+            keyboard.press('ctrl')
+            time.sleep(2)
+            start_time = time.time()
+            while not first_ressource_empty and not second_ressource_empty:
+                pyautogui.doubleClick(position['first_ressource'])
+                time.sleep(0.5)
+                first_ressource_empty = get_pixel_color_on_pos(position['first_ressource']) == couleur_inventory_no_ressource
+                second_ressource_empty = get_pixel_color_on_pos(position['second_ressource'])  == couleur_inventory_no_ressource
+                if start_time-time.time()>300:
+                    keyboard.release("ctrl")
+                    return 'trop long'
+            keyboard.release("ctrl")
+            print(first_ressource_empty, second_ressource_empty )
+
+            self.inventory_full=0
+            return "all done"
+
+    
+    def detect_full_inventory(self):
+        # global inventory_full
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            if self.inventory_open ==0:
+                keyboard.press_and_release("i")
+                time.sleep(0.5)
+            screenshot = pyautogui.screenshot()
+            if screenshot.getpixel(position['inventory_max']) == couleur_inventory_full:
+                self.inventory_full = 1
+                print("inventaire plein")
+            else:
+                self.inventory_full = 0
+                        
+                print("on peut continuer")
+            keyboard.press_and_release("i")
+            # return inventory_full
+    
+
+    def detect_inventory_open(self):
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            time.sleep(1)
+            try:
+                # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
+                image_positions = list(pyautogui.locateAllOnScreen(r"./photo/ton inventaire.png", region=region_teste_inventory, confidence=0.7))       
+                # print(image_positions)
+                if not len(image_positions) == 0:
+                    self.inventory_open = 1
+                else:
+                    self.inventory_open = 0
+
+            except:
+                self.inventory_open = 0
+        else:
+            return None
+
+
+    def use_brak_popo(self):
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            self.detect_inventory_open()
+            if self.inventory_open !=1:
+                keyboard.press_and_release("i")
+                time.sleep(2)
+            try:    
+                click_on_picture(path.join(pict_folder,"inventaire_divers_desactivate.png"),region=region_inventory)
+                time.sleep(2)
+            except:
+                print("divers already activate")    
+            # use_ressource(path.join(ressource_picture_folder, "potion", "brakmar.png"))
+            click_on_picture_once(path.join(ressource_picture_folder, "potion", "brakmar.png"))
+            keyboard.press_and_release('escape')
+            time.sleep(2)
+            self.position = [-23,38]
+
+
+    def follow_saved_road(self,road_name):
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            with open(r"C:\Users\apeir\Documents\code\dofus\map_info\saved_road.json", 'r') as file:
+                data = json.load(file)
+                # print(data[road_name])
+                road = data[road_name]
+                for point in road:
+                    pyautogui.click((point[0], point[1]))
+                    time.sleep(5)
+
+                
+    # def detect_full_inventory(self):
+    # # global inventory_full
+    # dofus_window = get_window(self.name)
+    # if dofus_window is not None:
+    #     keyboard.press_and_release("i")
+    #     time.sleep(0.5)
+    #     screenshot = pyautogui.screenshot()
+    #     if screenshot.getpixel(position['inventory_max']) == couleur_inventory_full:
+    #         self.inventory_full = 1
+    #         print("inventaire plein")
+    #     else:
+    #         self.inventory_full = 0
+                     
+    #         print("on peut continuer")
+    #     keyboard.press_and_release("i")
+    #     # return inventory_full
+    
+
+Iro = Personnage("Ironamo", 8, 3, "test", 86, [-23,38], "enutrof", ["bucheron" ,"mineur"])
+couzine = Monture(Iro, 666, "effect", 100)
+Iro.monture = couzine
+Lea = Personnage("Laestra", 6, 3, "test", 52, [-25,17], "iop", ["Bijoutier"])
+Taz = Personnage("Tazmany", 6, 3, "test", 52, [-25,17], "cra", ["Paysan"])
+# Iro.go_brak_bank()
+# time.sleep(2)
+# Iro.go_brak_bank()
+# Iro.get_screenshot_region(region_inventory)
+# print(Iro.monture.remplir_dd())
+# print(Iro.monture.check_if_dd_is_full())
+# print(Iro.monture.dd_full)

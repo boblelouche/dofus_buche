@@ -147,7 +147,7 @@ def get_screenshot_region(personage, region):
 
 # get_screenshot_region(enu ,region_inventory )
 
-go_brak_bank(Personage.Lea)     
+# go_brak_bank(Personage.Lea)     
 # print(Personage.Lea.position)
 # change_map('u')
 # deplacement("l")

@@ -1,13 +1,11 @@
 import pyautogui
 import pygetwindow as gw
 import time 
-import keyboard
 import cv2 as cv
 from os import path, listdir, remove, rename
 import numpy as np
 from ocr import read_img
 # import readline
-import json
 from json_utility import write_json 
 import random
 import pygame

@@ -16,6 +16,7 @@ pict_folder=r'C:\Users\apeir\Documents\code\dofus\photo'
 map_info_json = r"C:\Users\apeir\Documents\code\dofus\map_info\name.json"
 attack_case = path.join(pict_folder,"combat","red_case.png")
 full_sac_picture = path.join(pict_folder,'inventaire_plein.png')
+full_dd_picture = path.join(pict_folder,'dd_full.png')
 ressource_picture_folder = path.join(pict_folder,"ressource")
 zap_picture_folder =  path.join(pict_folder,"map","zap")
 arrows_picture_folder =  path.join(pict_folder,"map","move")
@@ -29,13 +30,18 @@ couleur_inventory_empty = (0, 0, 0)
 couleur_inventory_no_ressource = (190, 185, 152)
 position={
     "inventory_max" : (1329 , 157),
+    "inventory_dd_max": (445, 752),
     "brak_zapi_milice" : (1305, 258),
     "active_zapy_divers" : (887, 166),
     "enter_brak_bank": (1150, 263),
-    "brak_bankier": (1149, 348),
+    "brak_bankier": (1140, 360),
     "open_chest":(564 ,465),
     "bank_ressource":(1368,249),
-    "first_ressource":(1312, 344)
+    "first_ressource":(1312, 344),
+    "second_ressource":(1312, 344),
+    "first_ressource_dd":(1308, 341),
+    "second_ressource_dd":(1362, 342),
+    "third_ressource_dd":(1412, 342)
 }
 saved_road=r"C:\Users\apeir\Documents\code\dofus\map_info\saved_road.json"
 zapy_divers_desactivate_picture = path.join(pict_folder,'zapy_Divers_desactivate.png')
@@ -46,6 +52,7 @@ bombu_harvest_from_down ="rruuuuuuuuu"
 frene_harvest = "lluuurrrddrurddll"
 region_inventory = (1300,100,300,700)
 region_teste_inventory = (700,50,220,55)
+
 liste_colecte_bois = ["erable", "bombu","oliv","mchene","mnoyer","mchat","mfrene"]
 # liste_colecte_ = ["bombu"]
 liste_colecte_minerai = ["fer"]
