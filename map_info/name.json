@@ -1,0 +1,34 @@
+{
+    "maps": [
+        {
+            "AstrubFortdlAstrub-2Neutre_Coordonnes_1-25re": {
+                "coord": "1,-25",
+                "ressource": []
+            }
+        },
+        {
+            "rebatis Neutrene -26.txt": {
+                "coord": "1,-26",
+                "ressource": []
+            }
+        },
+        {
+            "AstrubNFbrtdAstrub--NeutreCoordonnes0-26.txt": {
+                "coord": "0,-26",
+                "ressource": []
+            }
+        },
+        {
+            "AstrubFort-dlAstrubNeutreCoordofnes_1-25re.txt": {
+                "coord": "1,-25",
+                "ressource": []
+            }
+        },
+        {
+            "AstrubFort-dlAstrubNeutreCoordofnes_1-254.txt": {
+                "coord": "1,-25",
+                "ressource": []
+            }
+        }
+    ]
+}
