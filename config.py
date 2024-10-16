@@ -2,7 +2,9 @@ from os import path, listdir
 import pygetwindow as gw
 import time 
 
-combat_sound_file = r'C:\Users\apeir\Documents\code\dofus\son\PULSE.mp3'
+root=r'C:\Users\apeir\Documents\code\dofus'
+
+combat_sound_file = path.join(root,'son','PULSE.mp3')
 harvest_time = 12
 enu = "Ironamo"
 iop = "Laestrea"
@@ -10,10 +12,10 @@ version = '1.44.5'
 
 temps_enemy=8
 
-temp_folder=r'C:\Users\apeir\Documents\code\dofus\temp'
-pict_folder=r'C:\Users\apeir\Documents\code\dofus\photo'
+temp_folder=path.join(root,'temp')
+pict_folder=path.join(root,'photo')
 # screenshot = path.join(temp_folder, f'temp_pict_{0}.png')
-map_info_json = r"C:\Users\apeir\Documents\code\dofus\map_info\name.json"
+map_info_json = path.join(root,'map_info','name.json')
 attack_case = path.join(pict_folder,"combat","mini_red_case.png")
 full_sac_picture = path.join(pict_folder,'inventaire_plein.png')
 full_dd_picture = path.join(pict_folder,'dd_full.png')
@@ -25,14 +27,14 @@ zap_pictures = [path.join(zap_picture_folder,f) for f in listdir(zap_picture_fol
 zap_selector_picture = path.join(zap_picture_folder,"selector_zap.png")
 move_arrows = [path.join(arrows_picture_folder,f) for f in listdir(arrows_picture_folder) if f.startswith('arrow')]
 move_stars = [path.join(arrows_picture_folder,f) for f in listdir(arrows_picture_folder) if f.startswith('star')]
-map_loading_picture= r"C:\Users\apeir\Documents\code\dofus\photo\map_loading.png"
+map_loading_picture= path.join(pict_folder,'map_loading.png')
 couleur_inventory_full = (255, 102, 0)
 couleur_inventory_empty = (0, 0, 0)
 couleur_inventory_no_ressource = (190, 185, 152)
-
 position={
     # "inventory_max" : (1320 , 157),
     "inventory_max" : (1190 , 432),
+    "inventory_75" : (1165 , 432),
     # "inventory_max" : (190 , 432),
     "inventory_dd_max": (445, 752),
     "brak_zapi_milice" : (1305, 258),
@@ -50,7 +52,7 @@ position={
     "second_ressource_dd":(415, 341),
     "third_ressource_dd":(468, 335)
 }
-saved_road=r"C:\Users\apeir\Documents\code\dofus\map_info\saved_road.json"
+saved_road=path.join(root,'map_info','saved_road.json')
 zapy_divers_desactivate_picture = path.join(pict_folder,'zapy_Divers_desactivate.png')
 zapy_arene = path.join(pict_folder,'zapy_arene.png')
 zapy_bank = path.join(pict_folder,'zapy_bank.png')

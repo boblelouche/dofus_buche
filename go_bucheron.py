@@ -38,8 +38,8 @@ def clic_on_zap(destination, personage):
             # print(image_positions)
                 
 
-def detect_zap_selector(personage):
-    dofus_window = get_window(personage)
+def detect_zap_selector(Perso):
+    dofus_window = get_window(Perso.name)
     if dofus_window is not None:
         try:
             image_positions = list(pyautogui.locateOnScreen(zap_selector_picture,confidence=0.8))

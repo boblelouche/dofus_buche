@@ -74,4 +74,4 @@ def make_combat(Perso):
     return 'end of figth'
 
 # print()
-make_combat(Iro)
+# make_combat(Iro)
