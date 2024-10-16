@@ -7,7 +7,7 @@ import numpy as np
 import random
 from config import * 
 from utility import *
-import Personage
+# import Personage
 
 
 def clic_on_zap(destination, personage):
@@ -63,76 +63,6 @@ def make_planche(personage):
                 return "scierie"
         except Exception as e:
             return e
-
-def deplacement(chemin):
-    for e in chemin:
-        change_map(e)
-        time.sleep(6)
-        # start_time = actual_time = time.time()
-
-        # while actual_time-start_time<5:
-            # image_positions = list(pyautogui.locateAllOnScreen(map_loading_picture, confidence=0.8))
-            # if len(image_positions)!=0:
-                # print("map have changed")
-                # break
-            # actual_time=time.time()
-                        # time.sleep(1)
-        # return "le deplacement n'as pas eu lieu"
-        # print("cooldown over")
-        
-
-
-def change_map(direction,personage):
-    dofus_window = get_window(personage)
-    if dofus_window is not None:
-        screen_width, screen_height = pyautogui.size()
-        region = {
-            "l":(screen_width // 10, 0, screen_width // 7, screen_height-250),
-            "r":(screen_width-500, 0, screen_width-250, screen_height-250),
-            "u":(0, 0, screen_width, 150),
-            "d":(0, screen_height-400, screen_width, screen_height-250)
-        }
-        print(pyautogui.size())
-        i=0
-        screenshot = path.join(temp_folder,f'screenshot_{i}.png')
-        pyautogui.screenshot(imageFilename=screenshot,region=region[direction])
-        print(region[direction])
-        if direction =="u":        
-            for picture in move_stars:
-                keyboard.press("a")
-                time.sleep(2)
-                try:
-                    # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                    image_positions = list(pyautogui.locateAllOnScreen(picture, region=region[direction], confidence=0.7))       
-                    # print(image_positions)
-                    if not len(image_positions) == 0:
-                        for box in image_positions:
-                            keyboard.release("a")
-                            pyautogui.click(x = box.left+10, y = box.top+10)
-                            return "found on windows"
-                except Exception as e :
-                    keyboard.release("a")
-                    print(e)
-                    continue
-        else:       
-            for picture in move_arrows:
-                keyboard.press("a")
-                time.sleep(2)
-                try:
-                    # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                    image_positions = list(pyautogui.locateAllOnScreen(picture, region=region[direction], confidence=0.7))       
-                    # print(image_positions)
-                    if not len(image_positions) == 0:
-                        for box in image_positions:
-                            keyboard.release("a")
-                            pyautogui.click(x = box.left, y = box.top+75)
-                            return "found on windows"
-                except Exception as e :
-                    keyboard.release("a")
-                    print(e)
-                    continue
-    else:
-        raise "window not found"
 
 
 def get_screenshot_region(personage, region):

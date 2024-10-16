@@ -48,42 +48,99 @@ class Monture:
             keyboard.press_and_release("escape")
     
     def vider_ressource_on_dd(self):
-        if not self.inventory_open == 1:
-            self.open_inventory()
-        first_ressource_empty = get_pixel_color_on_pos(position['first_ressource_dd']) == couleur_inventory_no_ressource
-        second_ressource_empty = get_pixel_color_on_pos(position['second_ressource_dd'])  == couleur_inventory_no_ressource
-        third_ressource_empty = get_pixel_color_on_pos(position['third_ressource_dd'])  == couleur_inventory_no_ressource
         # print(first_ressource_empty, second_ressource_empty )
         dofus_window = get_window(self.pers.name)
         if dofus_window is not None:
+            if not self.inventory_open == 1:
+                self.open_inventory()
             try:    
                 click_on_picture(path.join(pict_folder,"inventaire_ressource_desactivate.png"))
                 # click_on_picture(path.join(pict_folder,"inventaire_ressource_desactivate.png",region =region_inventory))
                 time.sleep(2)
             except:
                 print("ressource already activate")  
+            # first_ressource_empty = get_pixel_color_on_pos(position['first_ressource']) == couleur_inventory_no_ressource
+            second_ressource_empty = get_pixel_color_on_pos(position['second_ressource_perso_dd'])  == couleur_inventory_no_ressource
+            third_ressource_empty = get_pixel_color_on_pos(position['third_ressource_perso_dd'])  == couleur_inventory_no_ressource
             keyboard.press('ctrl')
             time.sleep(2)
 
             start_time = time.time()
-            print(first_ressource_empty, second_ressource_empty, third_ressource_empty)
-            while not first_ressource_empty or not second_ressource_empty or not third_ressource_empty or self.dd_full==1 :
+            # print(fi second_ressource_empty, third_ressource_empty)
+            # while not (second_ressource_empty and third_ressource_empty) or self.dd_full==1 :
+            while not (second_ressource_empty and third_ressource_empty)  or self.dd_full==1 :
             # while not first_ressource_empty or not second_ressource_empty :
                 print('debut vidage')
-                pyautogui.doubleClick(position['first_ressource_dd'])
+                pyautogui.doubleClick(position['first_ressource_perso_dd'])
                 self.check_if_dd_is_full()
                 time.sleep(0.5)
-                first_ressource_empty = get_pixel_color_on_pos(position['first_ressource_dd']) == couleur_inventory_no_ressource
-                second_ressource_empty = get_pixel_color_on_pos(position['second_ressource_dd'])  == couleur_inventory_no_ressource
-                third_ressource_empty = get_pixel_color_on_pos(position['third_ressource_dd'])  == couleur_inventory_no_ressource
-                if start_time-time.time()>200:
+                # first_ressource_empty = get_pixel_color_on_pos(position['first_ressource_perso_dd']) == couleur_inventory_no_ressource
+                second_ressource_empty = get_pixel_color_on_pos(position['second_ressource_perso_dd'])  == couleur_inventory_no_ressource
+                third_ressource_empty = get_pixel_color_on_pos(position['third_ressource_perso_dd'])  == couleur_inventory_no_ressource
+                if start_time-time.time()>60:
                     keyboard.release("ctrl")
                     return 'trop long'
             keyboard.release("ctrl")
             # print(first_ressource_empty, second_ressource_empty )
-
+        
             # self.dd_full=0
             return "all done"
+        
+    def prendre_ressource_on_dd(self):
+        dofus_window = get_window(self.pers.name)
+        
+        if dofus_window is not None:
+            if not self.inventory_open == 1:
+                self.open_inventory()
+            try:    
+                click_on_picture(path.join(pict_folder,"inventaire_ressource_desactivate.png"))
+                # click_on_picture(path.join(pict_folder,"inventaire_ressource_desactivate.png",region =region_inventory))
+                time.sleep(2)
+            except:
+                print("ressource already activate")  
+            # first_ressource_empty = get_pixel_color_on_pos(position['first_ressource_dd']) == couleur_inventory_no_ressource
+            second_ressource_empty = get_pixel_color_on_pos(position['second_ressource_dd'])  == couleur_inventory_no_ressource
+            third_ressource_empty = get_pixel_color_on_pos(position['third_ressource_dd'])  == couleur_inventory_no_ressource
+            # print(first_ressource_empty, second_ressource_empty )
+            test = ( second_ressource_empty and  third_ressource_empty)
+            keyboard.press('ctrl')
+            time.sleep(2)
+            start_time = time.time()
+            # print(first_ressource_empty and second_ressource_empty and third_ressource_empty)
+            # print(first_ressource_empty or second_ressource_empty or third_ressource_empty)
+            # while not (first_ressource_empty and second_ressource_empty and third_ressource_empty) or self.pers.inventory_full==1 :
+            # while  (first_ressource_empty or second_ressource_empty or third_ressource_empty) :
+            # print(not second_ressource_empty or not third_ressource_empty)
+            while not test :
+            # while not first_ressource_empty or not second_ressource_empty :
+                print('debut vidage')
+                pyautogui.doubleClick(position['first_ressource_dd'])
+                # self.check_if_dd_is_full()
+                # self.pers.inventory_full()
+                time.sleep(1)
+                # first_ressource_empty = get_pixel_color_on_pos(position['first_ressource_dd']) == couleur_inventory_no_ressource
+                second_ressource_empty = get_pixel_color_on_pos(position['second_ressource_dd'])  == couleur_inventory_no_ressource
+                third_ressource_empty = get_pixel_color_on_pos(position['third_ressource_dd'])  == couleur_inventory_no_ressource
+                # print(not second_ressource_empty or not third_ressource_empty)
+                test = ( second_ressource_empty and  third_ressource_empty)
+                
+                print(test)
+                if start_time-time.time()>60:
+                    keyboard.release("ctrl")
+                    keyboard.press_and_release('escape')
+                    time.sleep(0.7)
+                    keyboard.press_and_release('escape')
+                    return 'trop long'
+            pyautogui.doubleClick(position['first_ressource_dd'])
+            keyboard.release("ctrl")
+            keyboard.press_and_release('escape')
+            time.sleep(0.7)
+            keyboard.press_and_release('escape')
+            # print(first_ressource_empty, second_ressource_empty )
+        
+            # self.dd_full=0
+            return "all done"
+
 
     def check_if_dd_is_full(self):
         dofus_window = get_window(self.pers.name)
@@ -104,4 +161,5 @@ class Monture:
                 return "inventaire plein"
             except:
                 self.dd_full=0
+    
 
