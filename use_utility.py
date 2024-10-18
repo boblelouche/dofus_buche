@@ -35,8 +35,8 @@ def remove_closest_point():
 
 # # Handle JSON file reading and writing
     try:
-        with open(map_position, 'r+') as file:
-            if path.getsize(map_position) > 0:
+        with open(files["map_position"], 'r+') as file:
+            if path.getsize(files["map_position"]) > 0:
                 file_data = json.load(file)
             else:
                 file_data = {}
@@ -57,7 +57,7 @@ def remove_closest_point():
                         if calcule_distance(Point, Second_point)<2000:
                             file_data[key]["ressource"][ressource_type].remove(Second_point)
     file_data.update()
-    with open(map_position, 'w+') as file:
+    with open(files["map_position"], 'w+') as file:
         json.dump(file_data, file, indent=4)               
 
 def calculate_path(actual_position, destination):
@@ -92,5 +92,5 @@ def calculate_path(actual_position, destination):
 #             "map_changer": map_changer,
 #             "ressource": {}}}    
 #         file_data.update(t)
-#         with open(map_position, 'w+') as file:
+#         with open(files["map_position"], 'w+') as file:
 #             json.dump(file_data, file, indent=4)
