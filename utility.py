@@ -111,29 +111,6 @@ def get_pixel_color_on_pos(pos):
     return pixel
 
 
-def get_map_info(personage):
-    dofus_window = get_window(personage)
-    # Check if the window was found
-    if dofus_window != None:
-        print('windows detected')
-        left = 250
-        top = 10
-        width = 1380
-        height = 900
-        # dofus_window.activate()
-        i=0
-        screenshot_path = path.join(temp_folder, f'temp_actual_{i}.png')
-        while path.isfile(screenshot_path):
-            i+=1
-            screenshot_path = path.join(temp_folder, f'temp_actual_{i}.png')
-        screenshot = pyautogui.screenshot(region=(left, top, width, height))
-        screenshot.save(screenshot_path)
-        return screenshot_path
-    else:
-        print('windows not detected')
-        return None
-    
-
 def use_ressource(picture_ressource_path):
     try:
         # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))

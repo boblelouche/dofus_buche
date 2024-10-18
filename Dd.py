@@ -1,13 +1,6 @@
-import pyautogui
-import time
-import time
 from config import *
-import keyboard
-from os import path, listdir
-from json_utility import write_json
-import json
 from utility import *
-
+import keyboard
 
 
 class Monture:
@@ -26,7 +19,7 @@ class Monture:
             keyboard.press_and_release("escape")
             time.sleep(0.5)            
             keyboard.press_and_release("escape")            
-            with open(r"C:\Users\apeir\Documents\code\dofus\map_info\saved_road.json", 'r') as file:
+            with open(saved_road, 'r') as file:
                 data = json.load(file)
                 # print(data[road_name])
                 road = data["open_dd"]
