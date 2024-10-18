@@ -1,5 +1,5 @@
 import pyautogui
-import time
+# import time
 import win32api
 from config import *
 from os import rename,listdir
@@ -10,6 +10,7 @@ import keyboard
 from PIL import Image
 from imagehash import phash
 from imagehash import hex_to_hash
+from math import sqrt
 
 def make_image_hash(image_path):
     image = Image.open(image_path)
@@ -66,8 +67,8 @@ def save_road(name):
     state_escape = win32api.GetKeyState(0x1B)  # Escape button up = 0 or 1. Button down = -127 or -128
     try:
     # Handle JSON file reading and writing
-        with open(saved_road, 'r+') as file:
-            if path.getsize(saved_road) > 0:
+        with open(files["saved_road"], 'r+') as file:
+            if path.getsize(files["saved_road"]) > 0:
                 file_data = json.load(file)
             else:
                 file_data = {}
@@ -82,7 +83,7 @@ def save_road(name):
                 new_road = {name: road}
                 file_data.update(new_road)
 
-                with open(saved_road, 'w') as file:
+                with open(files["saved_road"], 'w') as file:
                     json.dump(file_data, file, indent=4)
 
                 return True
@@ -90,13 +91,15 @@ def save_road(name):
         road.append(detect_click_left())
         print(road)
 
-def get_map_name_picture():
+def get_map_name_picture(Perso):
     # time.sleep(2)
-    screenshot_path = path.join(temp_folder, 'actual_map.png')
-    # screenshot_path = path.join(temp_folder, f'actual_map{Perso.name}.png')
-    screenshot = pyautogui.screenshot(region=region_map_name)
-    screenshot.save(screenshot_path)
-    return screenshot_path
+    # screenshot_path = path.join(directories["temp"], f'actual_map.png')
+    Perso.get_window()
+    if Perso.window is not None:
+        screenshot_path = path.join(directories["temp"], f'actual_map_{Perso.name}.png')
+        screenshot = pyautogui.screenshot(region=regions["map_name"])
+        screenshot.save(screenshot_path)
+        return screenshot_path
 
 def find_map_changer():
     screen_width, screen_height = pyautogui.size()
@@ -107,9 +110,9 @@ def find_map_changer():
     }
     u=(0, 0, screen_width, 150)
     map_changer={"l":(),"r":(),"d":(),"u":()}
-    print(pyautogui.size())
+    # print(pyautogui.size())
     for direction in region:
-        for picture in move_arrows:
+        for picture in list_pictures["move_arrows"]:
             try:
                 keyboard.press("a")
                 time.sleep(2)
@@ -125,7 +128,7 @@ def find_map_changer():
             except Exception as e :
                 keyboard.release("a")
                 # print(e)   
-    for picture in move_stars:
+    for picture in list_pictures["move_stars"]:
         try:
             keyboard.press("a")
             time.sleep(2)
@@ -143,52 +146,60 @@ def find_map_changer():
             continue
     return map_changer
 
-def find_actual_map(name, actual_position):
-    dofus_window = get_window(name)
-    if dofus_window is not None:    
+
+def find_actual_map(Perso):
+    Perso.get_window()
+    if Perso.window is not None:
         try:
         # Handle JSON file reading and writing
-            with open(map_position, 'r+') as file:
-                if path.getsize(map_position) > 0:
+            with open(files["map_position"], 'r+') as file:
+                if path.getsize(files["map_position"]) > 0:
                     file_data = json.load(file)
                 else:
                     file_data = {}
         except json.JSONDecodeError:
             file_data = {}
-        map_name_picture =  get_map_name_picture()
+        map_name_picture =  get_map_name_picture(Perso)
         # time.sleep(1)
         # print(map_name_picture)
         actual_hash = make_image_hash(map_name_picture)
         # print(actual_hash)
-        keys = list(file_data.keys())
-        # for key in keys:
-        for key in keys:
-            if 'image_hash' in file_data[key]:
-                stored_hash = hex_to_hash(file_data[key]['image_hash'])  # Convert the string back to an imagehash object
-                if stored_hash == actual_hash:  # Now this comparison should work
-                    print(f"Image hash found in key: {key}")
-                    return key
-        new_key = str(len(keys)+1)
+        for key, value in file_data.items():
+            if 'image_hash' in value and hex_to_hash(value['image_hash']) == actual_hash:
+                print(f"Image hash found in key: {key}")
+                return key
+        new_key = str(len(file_data.keys())+1)
         map_changer = find_map_changer()
         # print(map_changer)
         t = { new_key: {
             # "position" :["x","y"],
-            "position" :actual_position,
+            "position" :f'{Perso.position}',
             "name":"",
-            "picture_path": path.join(map_name_picture_folder,f'{new_key}.png'),
+            "picture_path": path.join(directories["map_name"],f'{new_key}.png'),
             "image_hash":f'{actual_hash}',
             "map_changer": map_changer,
             "ressource": {}}}    
         file_data.update(t)
-        with open(map_position, 'w+') as file:
+        with open(files["map_position"], 'w+') as file:
             json.dump(file_data, file, indent=4)
         # rename(map_name_picture, path.join(,f'{key}.png'))
         try:
-            rename(map_name_picture, path.join(map_name_picture_folder,f'{new_key}.png'))
+            rename(map_name_picture, path.join(directories["map_name"],f'{new_key}.png'))
         except:
-            rename(map_name_picture, path.join(map_name_picture_folder,f'{new_key}bis.png'))
-
+            rename(map_name_picture, path.join(directories["map_name"],f'{new_key}bis.png'))
         return new_key
+    
+def confirme_changement_map(timeout=15):
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        try:
+            location = pyautogui.locateOnScreen(files["map_loading_picture"], confidence=0.8)
+            if location:
+                return True
+        except Exception as e:
+            continue
+        time.sleep(0.1)
+    raise False
 
 
 def get_pixel_color_on_click():
@@ -219,8 +230,8 @@ def get_pixel_color_on_pos(pos):
 
     Returns:
 def get_map_info(key):
-    screenshot_path = path.join(temp_folder, f'{key}.png')
-    screenshot = pyautogui.screenshot(region=region_map_name)
+    screenshot_path = path.join(directories["temp"], f'{key}.png')
+    screenshot = pyautogui.screenshot(region=regions["map_name"])
     screenshot.save(screenshot_path)
     return screenshot_path
     
@@ -257,7 +268,7 @@ def click_on_picture(picture):
 
 
 def click_on_picture_once(picture):
-    # try:
+    try:
         image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
         # image_positions = list(pyautogui.locateAllOnScreen(picture, region=zone, confidence=0.85))       
         # print(image_positions)
@@ -266,11 +277,51 @@ def click_on_picture_once(picture):
                 print(box.left, box.top)
                 pyautogui.doubleClick(box.left+5,box.top+5)
                 return 'done'
-    # except:
-    #     return None
+    except:
+        return None
 
 
+def calcule_distance(A,B):
+    return int(sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2))
 
+
+def remove_closest_point():
+
+# # Handle JSON file reading and writing
+    try:
+        with open(files["map_position"], 'r+') as file:
+            if path.getsize(files["map_position"]) > 0:
+                file_data = json.load(file)
+            else:
+                file_data = {}
+    except json.JSONDecodeError:
+        file_data = {}
+    keys = list(file_data.keys())
+    for key in keys:
+        ressource_types = list(file_data[key]["ressource"].keys())
+        if len(ressource_types)!=0:
+            for ressource_type in ressource_types:
+                checked = []
+                temp=file_data[key]["ressource"][ressource_type]
+                # print(file_data[key]["ressource"][ressource_type])
+                for Point in temp:
+                    checked.append(Point)
+                    temp.remove(Point)                
+                    for Second_point in temp:
+                        if calcule_distance(Point, Second_point)<2000:
+                            file_data[key]["ressource"][ressource_type].remove(Second_point)
+    file_data.update()
+    with open(files["map_position"], 'w+') as file:
+        json.dump(file_data, file, indent=4)               
+
+def calculate_path(actual_position, destination):
+    distance_x =  sqrt((destination[0]-actual_position[0])**2)
+    distance_y =  sqrt((destination[1]-actual_position[1])**2)
+    if destination[0]<actual_position[0]:
+        distance_x*=-1
+    if destination[1]>actual_position[1]:
+        distance_y*=-1
+    return (distance_x,distance_y)
 # def deplacement(chemin):
 #     for e in chemin:
 #         change_map(e)
@@ -278,7 +329,7 @@ def click_on_picture_once(picture):
 #         # start_time = actual_time = time.time()
 
         # while actual_time-start_time<5:
-            # image_positions = list(pyautogui.locateAllOnScreen(map_loading_picture, confidence=0.8))
+            # image_positions = list(pyautogui.locateAllOnScreen(files["map_loading_picture"], confidence=0.8))
             # if len(image_positions)!=0:
                 # print("map have changed")
                 # break
