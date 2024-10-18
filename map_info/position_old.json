@@ -1,0 +1,379 @@
+{
+    "1": {
+        "position": [
+            "4",
+            "-19"
+        ],
+        "name": "Zap_Asturb",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\1.png",
+        "image_hash": "c7aa8e72ca466ae2",
+        "map_changer": {
+            "l": [
+                325,
+                447
+            ],
+            "r": [
+                1554,
+                641
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                991,
+                29
+            ]
+        }
+    },
+    "2": {
+        "position": [
+            "3",
+            "-19"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\2.png",
+        "image_hash": "ca95b4e5ca094eea",
+        "map_changer": {
+            "l": [
+                325,
+                446
+            ],
+            "r": [
+                1564,
+                82
+            ],
+            "d": [
+                893,
+                786
+            ],
+            "u": [
+                884,
+                31
+            ]
+        }
+    },
+    "3": {
+        "position": [
+            "3",
+            "-18"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\3.png",
+        "image_hash": "add07ff0890d3067",
+        "map_changer": {
+            "l": [],
+            "r": [
+                1564,
+                82
+            ],
+            "d": [
+                986,
+                783
+            ],
+            "u": [
+                897,
+                40
+            ]
+        },
+        "ressource": {
+            "erable": [
+                "(1,2)",
+                "()"
+            ]
+        }
+    },
+    "4": {
+        "position": [
+            "4",
+            "-18"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\4.png",
+        "image_hash": "fdc69c9a002c675b",
+        "map_changer": {
+            "l": [
+                324,
+                445
+            ],
+            "r": [
+                1555,
+                495
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                980,
+                31
+            ]
+        },
+        "ressource": {}
+    },
+    "5": {
+        "position": [
+            "-29",
+            "23"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\5.png",
+        "image_hash": "d094a4c32b3f6b2b",
+        "map_changer": {
+            "l": [
+                332,
+                403
+            ],
+            "r": [
+                1562,
+                595
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                797,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "6": {
+        "position": [
+            "-29",
+            "22"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\6.png",
+        "image_hash": "83c705d13f2f6323",
+        "map_changer": {
+            "l": [
+                332,
+                547
+            ],
+            "r": [
+                1561,
+                403
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                797,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "7": {
+        "position": [
+            "-29",
+            "22"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\7.png",
+        "image_hash": "82848cc32f2f6b6f",
+        "map_changer": {
+            "l": [
+                332,
+                547
+            ],
+            "r": [
+                1561,
+                403
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                797,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "8": {
+        "position": [
+            "-29",
+            "22"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\8.png",
+        "image_hash": "809425c13f3f6b3b",
+        "map_changer": {
+            "l": [
+                332,
+                547
+            ],
+            "r": [
+                1561,
+                689
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                797,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "9": {
+        "position": [
+            "-30",
+            "22"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\9.png",
+        "image_hash": "824c34c33b3f6b2b",
+        "map_changer": {
+            "l": [],
+            "r": [
+                1562,
+                547
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                1081,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "10": {
+        "position": [
+            "-30",
+            "21"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\10.png",
+        "image_hash": "a1f60ec1313b632f",
+        "map_changer": {
+            "l": [],
+            "r": [
+                1562,
+                547
+            ],
+            "d": [
+                1867,
+                1105
+            ],
+            "u": [
+                892,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "11": {
+        "position": [
+            "x",
+            "y"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\11.png",
+        "image_hash": "a1f20ec1732d632f",
+        "map_changer": {
+            "l": [],
+            "r": [
+                1562,
+                547
+            ],
+            "d": [
+                1159,
+                1106
+            ],
+            "u": [
+                892,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "12": {
+        "position": [
+            "x",
+            "y"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\12.png",
+        "image_hash": "d0f024c32b3f6b2b",
+        "map_changer": {
+            "l": [],
+            "r": [
+                1561,
+                403
+            ],
+            "d": [
+                1159,
+                1106
+            ],
+            "u": [
+                1081,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "13": {
+        "position": [
+            "x",
+            "y"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\13.png",
+        "image_hash": "c69031c32f3b6b2e",
+        "map_changer": {
+            "l": [
+                332,
+                403
+            ],
+            "r": [
+                1562,
+                595
+            ],
+            "d": [
+                1159,
+                1106
+            ],
+            "u": [
+                797,
+                44
+            ]
+        },
+        "ressource": {}
+    },
+    "14": {
+        "position": [
+            "x",
+            "y"
+        ],
+        "name": "",
+        "picture_path": "C:\\Users\\apeir\\Documents\\code\\dofus\\photo\\map\\name\\14.png",
+        "image_hash": "a1f61ec1313b632b",
+        "map_changer": {
+            "l": [],
+            "r": [
+                1562,
+                547
+            ],
+            "d": [
+                1159,
+                1106
+            ],
+            "u": [
+                892,
+                44
+            ]
+        },
+        "ressource": {}
+    }
+}

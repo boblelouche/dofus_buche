@@ -7,8 +7,8 @@ from os import path, listdir, remove, rename
 import numpy as np
 from Personage import *
 import keyboard
-from init import *
-
+# from init import *
+from utility import * 
 
 active_turn = False
 picture_bois_enemy_folder = r"C:\Users\apeir\Documents\code\dofus\photo\bois\enemy" 

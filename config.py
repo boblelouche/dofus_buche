@@ -16,6 +16,9 @@ temp_folder=path.join(root,'temp')
 pict_folder=path.join(root,'photo')
 # screenshot = path.join(temp_folder, f'temp_pict_{0}.png')
 map_info_json = path.join(root,'map_info','name.json')
+# map_position = path.join(root,'map_info',".json")
+map_position = path.join(root,'map_info',"position.json")
+
 attack_case = path.join(pict_folder,"combat","mini_red_case.png")
 full_sac_picture = path.join(pict_folder,'inventaire_plein.png')
 full_dd_picture = path.join(pict_folder,'dd_full.png')
@@ -31,6 +34,8 @@ map_loading_picture= path.join(pict_folder,'map_loading.png')
 couleur_inventory_full = (255, 102, 0)
 couleur_inventory_empty = (0, 0, 0)
 couleur_inventory_no_ressource = (190, 185, 152)
+db_player = path.join(root,"players.pkl")
+
 position={
     # "inventory_max" : (1320 , 157),
     "inventory_max" : (1190 , 432),
@@ -62,10 +67,12 @@ frene_harvest = "lluuurrrddrurddll"
 region_inventory = (1300,100,300,700)
 region_teste_inventory = (700,50,220,55)
 region_inventory_dd = (320,150,320,620)
-
-liste_colecte_bois = ["mfrene","erable", "bombu","oliv","mchene","mnoyer","mchat"]
-# liste_colecte_ = ["bombu"]
-liste_colecte_minerai = ["fer"]
+region_map_name = (450,60,100,60)
+map_name_picture_folder = path.join(pict_folder,'map','name')
+# liste_colecte_bois = ["mfrene","erable", "bombu","oliv","mchene","mnoyer","mchat"]
+# liste_colecte_bois = ["mfrene","mchene","mnoyer","mchat"]
+liste_colecte_bois = ["bombu"]
+# liste_colecte_minerai = ["fer"]
 
 def get_window(personage):
     dofus_window = gw.getWindowsWithTitle(dofus_window_name(personage))[0]

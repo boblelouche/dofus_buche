@@ -1,6 +1,5 @@
 import pyautogui
 import time
-import win32api
 import time
 from config import *
 import keyboard
@@ -8,9 +7,11 @@ from os import path, listdir
 from json_utility import write_json
 import json
 from utility import *
-from Dd import Monture
+# from Dd import Monture
 import pygame
 from combat import *
+import pickle
+
 
 
 class Player:
@@ -21,6 +22,7 @@ class Player:
         self.sort = sort
         self.lvl = lvl
         self.position = position
+        self.actual_map_key= None
         self.classe = classe
         self.metier = metier
         self.inventory_full = 0
@@ -31,6 +33,16 @@ class Player:
         self.in_combat = 0
         self.collecte_tour = 0 
 
+
+    def update_player(self):
+        with open(db_player, 'rb') as f:
+            players = pickle.load(f)
+        for i, player in enumerate(players):
+            if player.name == self.name:
+                players[i] = self
+                break
+        with open('players.pkl', 'wb') as f:
+            pickle.dump(players, f)
 
     def get_screenshot_region(self, region):
         dofus_window = get_window(self.name)
@@ -62,6 +74,7 @@ class Player:
                 pygame.mixer.music.play()
                 # Keep the program running long enough to hear the sound
                 start_time = time.time()
+                self.update_player()
         # Perform the action for 10 seconds
                 while time.time() - start_time < 30:
                 # while pygame.mixer.music.get_busy():
@@ -81,10 +94,13 @@ class Player:
         if self.monture !=None:
             self.monture.prendre_ressource_on_dd()
             pyautogui.click(position["brak_bankier"])
+            # cursor.click_on(position["brak_bankier"])
             time.sleep(1)
             pyautogui.click((position["brak_bankier"][0]+10,position["brak_bankier"][1]+11))
+            # cursor.click_on((position["brak_bankier"][0]+10,position["brak_bankier"][1]+11))
             time.sleep(1)
             pyautogui.click(position["open_chest"])
+            # cursor.click_on(position["open_chest"])
             time.sleep(0.5)
             self.vider_ressource_on_bank()
 
@@ -142,6 +158,7 @@ class Player:
             print(first_ressource_empty, second_ressource_empty )
 
             self.inventory_full=0
+            self.update_player()
             return "all done"
 
     
@@ -160,9 +177,11 @@ class Player:
             print(pixel)
             if pixel == couleur_inventory_full:
                 self.inventory_full = 1
+                self.update_player()
                 print("inventaire plein")
             else:
                 self.inventory_full = 0
+                self.update_player()
                 # pyautogui.locateAllOnScreen(attack_case,confidence=0.90)        
                 print("on peut continuer")
             keyboard.press_and_release("i")
@@ -183,9 +202,11 @@ class Player:
             print(pixel)
             if pixel == couleur_inventory_full:
                 self.inventory_75 = 1
+                self.update_player()
                 # print("inventaire plein")
             else:
                 self.inventory_75 = 0
+                self.update_player()
                 # pyautogui.locateAllOnScreen(attack_case,confidence=0.90)        
                 print("on peut continuer")
             keyboard.press_and_release("i")
@@ -203,13 +224,16 @@ class Player:
                 if not len(list(image_positions)) == 0:
                     print("inventory detected open")
                     self.inventory_open = 1
+                    self.update_player()
                 else:
                     print("inventory detected not open")
                     self.inventory_open = 0
+                    self.update_player()
 
             except:
                 print("inventory not detected ")
                 self.inventory_open = 0
+                self.update_player()
         else:
             return None
     
@@ -238,12 +262,13 @@ class Player:
             keyboard.press_and_release('escape')
             time.sleep(2)
             self.position = [-23,38]
+            self.update_player()
 
 
     def follow_saved_road(self,road_name):
         dofus_window = get_window(self.name)
         if dofus_window is not None:
-            with open(r"C:\Users\apeir\Documents\code\dofus\map_info\saved_road.json", 'r') as file:
+            with open(saved_road, 'r') as file:
                 data = json.load(file)
                 # print(data[road_name])
                 road = data[road_name]
@@ -251,67 +276,64 @@ class Player:
                     pyautogui.click((point[0], point[1]))
                     time.sleep(5)
 
+    def move_map(self,direction):
+        try:
+    # Handle JSON file reading and writing
+            with open(map_position, 'r+') as file:
+                if path.getsize(saved_road) > 0:
+                    file_data = json.load(file)
+                else:
+                    file_data = {}
+        except json.JSONDecodeError:
+            file_data = {}
+        for key in file_data:
+            if file_data[key]["position"]==self.position:
+                self.actual_map_key=key
+                pos=file_data[self.actual_map_key]["map_changer"][direction]
+                pyautogui.click((pos[0],pos[1]))
+                if direction=="u":
+                    self.position[1] = str(int(self.position[1])-1)
+                if direction=="d":
+                    self.position[1] = str(int(self.position[1])+1)             
+                if direction=="r":
+                    self.position[0] = str(int(self.position[0])+1)
+                if direction=="l":
+                    self.position[0] = str(int(self.position[0])-1)
+                self.update_player()
+                return
+        self.actual_map_key = find_actual_map(self.name,self.position)
+        with open(map_position, 'r+') as file:
+            file_data = json.load(file)
+            pos=file_data[self.actual_map_key]["map_changer"][direction]
+        pyautogui.click((pos[0],pos[1]))
+        if direction=="u":
+            self.position[1] = str(int(self.position[1])-1)
+        if direction=="d":
+            self.position[1] = str(int(self.position[1])+1)             
+        if direction=="r":
+            self.position[0] = str(int(self.position[0])+1)
+        if direction=="l":
+            self.position[0] = str(int(self.position[0])-1)
+        self.update_player()
+
 
     def colecte_on_road(self,chemin):
-        for direction in chemin:
-            self.alamano("bois")
-            self.move_map(direction)
-
-
-        
-    def move_map(self, direction):
         dofus_window = get_window(self.name)
         if dofus_window is not None:
-            screen_width, screen_height = pyautogui.size()
-            region = {
-                "l":(screen_width // 10, 0, screen_width // 7, screen_height-250),
-                "r":(screen_width-500, 0, screen_width-250, screen_height-250),
-                "u":(0, 0, screen_width, 150),
-                "d":(0, screen_height-400, screen_width, screen_height-250)
-            }
-            print(pyautogui.size())
-            i=0
-            screenshot = path.join(temp_folder,f'screenshot_{i}.png')
-            pyautogui.screenshot(imageFilename=screenshot,region=region[direction])
-            print(region[direction])
-            if direction =="u":        
-                for picture in move_stars:
-                    keyboard.press("a")
-                    time.sleep(2)
-                    try:
-                        # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                        image_positions = list(pyautogui.locateAllOnScreen(picture, region=region[direction], confidence=0.7))       
-                        # print(image_positions)
-                        if not len(image_positions) == 0:
-                            for box in image_positions:
-                                keyboard.release("a")
-                                pyautogui.click(x = box.left+10, y = box.top+10)
-                                return "found on windows"
-                    except Exception as e :
-                        keyboard.release("a")
-                        print(e)
-                        continue
-            else:       
-                for picture in move_arrows:
-                    keyboard.press("a")
-                    time.sleep(2)
-                    try:
-                        # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                        image_positions = list(pyautogui.locateAllOnScreen(picture, region=region[direction], confidence=0.7))       
-                        # print(image_positions)
-                        if not len(image_positions) == 0:
-                            for box in image_positions:
-                                keyboard.release("a")
-                                pyautogui.click(x = box.left, y = box.top+75)
-                                return "found on windows"
-                    except Exception as e :
-                        keyboard.release("a")
-                        print(e)
-                        continue
-        else:
-            raise "window not found"
+            for direction in chemin:
+                self.alamano("bois")
+                self.move_map(direction)
+                time.sleep(2)
 
 
+    def deplacement(self, chemin):
+        dofus_window = get_window(self.name)
+        if dofus_window is not None:
+            for s in chemin :
+                self.move_map(s)
+                time.sleep(6)
+           
+        
     def collecte(self, seek_picture):
         try:
             image_positions = list(pyautogui.locateAllOnScreen(seek_picture,confidence=0.85))
@@ -325,9 +347,11 @@ class Player:
                 time.sleep(12)
                 self.detect_combat()
                 self.collecte_tour+=1
+                self.update_player()
                 if self.collecte_tour>=20:
                     self.detect_inventory_75()
                     self.collecte_tour=0
+                    self.update_player()
                 if self.inventory_75==1:
                     self.detect_full_inventory()
                 return 'Récolté'
@@ -339,8 +363,8 @@ class Player:
         dofus_window = get_window(self.name)
         # try:
         if dofus_window != None:
-            i=0
-            while i<3:
+            it=0
+            while it<3:
                 for element in liste_colecte_bois:
                     for file in listdir(path.join(pict_folder,ressource_type)): 
                         if file.startswith(element):
@@ -365,7 +389,37 @@ class Player:
                                         # print("it's time de ce vider")                           
                         # except Exception as e:
                         #     return 'not found'
-            i+=1
+            it+=1
+
+
+    def add_ressource_position_on_map(self,ressource_type):
+        dofus_window = get_window(self.name)
+        # try:
+        if dofus_window != None:
+            try:
+    # Handle JSON file reading and writing
+                with open(map_position, 'r+') as file:
+                    if path.getsize(saved_road) > 0:
+                        file_data = json.load(file)
+                    else:
+                        file_data = {}
+            except json.JSONDecodeError:
+                file_data = {}
+        for key in file_data:
+            if file_data[key]["position"]==self.position:
+                self.actual_map_key=key
+                for file in listdir(path.join(pict_folder,ressource_type)):
+                    seek_picture= path.join(pict_folder,ressource_type,file)
+                    try:
+                        image_positions = list(pyautogui.locateAllOnScreen(seek_picture,confidence=0.85))
+        # print(image_positions)
+                        for box in image_positions:
+                            file_data[key]["ressource"][ressource_type]=(int(box.left),int(box.top))
+                    except  Exception as e:
+                        print(e)
+                file_data.update()
+                with open(map_position, 'w+') as file:
+                    json.dump(file_data, file, indent=4)
 
     # def detect_full_inventory(self):
     # # global inventory_full
