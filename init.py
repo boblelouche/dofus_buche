@@ -1,6 +1,7 @@
 # from Personage import *
 # from Dd import Monture
 # from Personage import Player
+# import pickle
 
 
 # Iro = Player("Ironamo", 8, 3, "test", 86, ["-26","21"], "enutrof", ["bucheron" ,"mineur"])

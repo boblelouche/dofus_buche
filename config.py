@@ -1,33 +1,46 @@
 from os import path, listdir
 import pygetwindow as gw
-import time 
+# 
 
 root=r'C:\Users\apeir\Documents\code\dofus'
-
 combat_sound_file = path.join(root,'son','PULSE.mp3')
 harvest_time = 12
-
 version = '1.44.5'
-
 temps_enemy=8
+
+
+DEPLACEMENT_TIMING_RUN = {
+'horizontal': 0.3,
+'vertical': 0.2,
+'diagonal': 0.2
+}
+DEPLACEMENT_TIMING_WALK = {
+'horizontal': 0.75,
+'vertical' : 0.5,
+'diagonal': 0.5
+}
+
+
 
 # Define directories
 directories = {
     "temp": path.join(root,'temp'),
     "photo": path.join(root,'photo'),
+    "resource": path.join(root,'resource'),
     "map_info": path.join(root,'map_info'),
-    "combat": path.join(root,'photo', "combat"),
+    "combat": path.join(root,'resource','photo', "combat"),
     "ressource": path.join(root,'photo', "ressource"),
     "map": path.join(root,'photo', "map"),
     "zap": path.join(root,'photo', "map", "zap"),
     "move": path.join(root,'photo', "map", "move"),
-    "map_name": path.join(root,'photo', "map", "name")
+    "map_name": path.join(root,'photo', "map", "name"),
+    "enemys_pictures":path.join(root,'photo',"enemy"),   
+
 }
 
 # Define files
 files = {
     # "map_info": path.join(directories["map_info"],'name.json'),
-    "map_position": path.join(directories["map_info"],"position.json"),
     "map_loading_picture": path.join(directories["photo"],'map_loading.png'),
     "attack_case": path.join(directories["combat"],"mini_red_case.png"),
     "full_sac_picture": path.join(directories["photo"],'inventaire_plein.png'),
@@ -44,6 +57,9 @@ files = {
     "zapy_arene": path.join(directories["photo"],'zapy_arene.png'),
     "zapy_bank": path.join(directories["photo"],'zapy_bank.png'),
     "db_player": path.join(root,"players.pkl"),
+    "map_position": path.join(directories["map_info"],"position.json"),
+    "map_position_db": path.join(directories["map_info"],"position.pkl"),
+    "xy_cell":path.join(directories["map_info"],"xy_cell.json"),
     "saved_road": path.join(directories["map_info"],'saved_road.json')
     
 }
@@ -52,7 +68,8 @@ files = {
 colors = {
     "inventory_full": (255, 102, 0),
     "inventory_empty": (0, 0, 0),
-    "inventory_no_ressource": (190, 185, 152)
+    "inventory_no_ressource": (190, 185, 152),
+    "combat_empty_cell":[(161, 180, 100),(152, 170, 94)]
 }
 
 # Define positions
@@ -78,10 +95,18 @@ positions = {
 
 # Define regions
 regions = {
+    # "exemple":("left","top","width","height"),
+    "window_dofus":(299,19,1299,1001),
     "inventory": (1300,100,300,700),
     "teste_inventory": (700,50,220,55),
     "inventory_dd": (320,150,320,620),
-    "map_name": (450,60,100,60)
+    "map_name": (450,60,100,60),
+    "combat_mini":(290,690,1390,100),
+    "chat":(299,800,705,201),
+    "vie":(1000,790,80,80),
+    "sort_zone":(1100,890,470,110),    
+    "chall_zone":(312,135,75,210),
+    "fight_zone":(299,19,1299,800)
 }
 
 # Define harvest patterns
@@ -93,12 +118,16 @@ harvest_patterns = {
 
 # Define resource lists
 resource_lists = {
-    "colecte_bois": ["mfrene","mchene","mnoyer","mchat"]
+    "bois": ["mfrene", "mchene", "mnoyer", "mchat", "if"],
+    "cereal":["ble"]
 }
 
 # Define pictures
 list_pictures = {
     "zap": [path.join(directories["zap"],f) for f in listdir(directories["zap"]) if f.startswith('zap')],
     "move_arrows": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('arrow')],
-    "move_stars": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('star')]
+    "move_stars": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('star')],
+    "bucheron_enemys":[path.join(directories["enemys_pictures"],"bucheron",f) for f in listdir(path.join(directories["enemys_pictures"],"bucheron"))]
 }
+# with open(files['db_player'], 'rb') as f:
+#     Iro, Lea, Taz = pickle.load(f)

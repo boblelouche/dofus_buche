@@ -1,16 +1,13 @@
 import pyautogui
 import time
-import time
 from config import *
 import keyboard
 from os import path, listdir
-from json_utility import write_json
-import json
+from json_utility import *
 from utility import *
 # from Dd import Monture
 import pygame
 from combat import *
-import pickle
 from player_method import *
 
 
@@ -46,8 +43,6 @@ class Player:
         else:
             self.window = None 
 
-
-
     def update_player(self):
         with open(files["db_player"], 'rb') as f:
             players = pickle.load(f)
@@ -73,17 +68,13 @@ class Player:
     def vider_ressource_on_bank(self):
         fvider_ressource_on_bank(self)
 
-
-
     def get_screenshot_region(self, region):
-
         self.get_window()
         if self.window is not None:
             time.sleep(1)
-            i=0
             # pyautogui.click(position['first_ressource'])
             # time.sleep(2)
-            screenshot = path.join(directories["temp"],f'screenshot_{i}.png')
+            screenshot = path.join(directories["temp"],f'screenshot_{self.name}.png')
             pyautogui.screenshot(imageFilename=screenshot, region=region, allScreens=False)
             
     def get_screenshot_first_ressouce(self):
@@ -107,8 +98,7 @@ class Player:
         # Perform the action for 10 seconds
                 while time.time() - start_time < 30:
                 # while pygame.mixer.music.get_busy():
-                    pygame.time.Clock().tick(10)
-                
+                    pygame.time.Clock().tick(10)         
             # else:
             #   return None
         except:
@@ -199,6 +189,7 @@ class Player:
     def use_brak_popo(self):
         fuse_brak_popo(self)
 
+
     def follow_saved_road(self,road_name):
         self.get_window()
         if self.window is not None:
@@ -210,33 +201,23 @@ class Player:
                     pyautogui.click((point[0], point[1]))
                     time.sleep(5)
 
+
     def move_map(self,direction):
         # check=None
         self.get_window()
         if self.window is not None:
-            direction_dict = {
-                "u": (1, -1),
-                "d": (1, 1),
-                "r": (0, 1),
-                "l": (0, -1)
-            }
-            try:
-        # Handle JSON file reading and writing
-                with open(files["map_position"], 'r+') as file:
-                    if path.getsize(files["map_position"]) > 0:
-                        file_data = json.load(file)
-                    else:
-                        file_data = {}
-            except json.JSONDecodeError:
-                file_data = {}
-            
+            direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
+            file_data=read_pkl(files["map_position_db"])           
             for key in file_data:
                 if file_data[key]["position"]==self.position:
                     self.position = [int(self.position[0]),int(self.position[1])]
                     self.actual_map_key=key
                     pos=file_data[self.actual_map_key]["map_changer"][direction]
                     pyautogui.click((pos[0],pos[1]))
+                    # try:
                     check = confirme_changement_map()
+                    # except:
+
                     if check == True:
                         time.sleep(0.5)
                         if direction in direction_dict:
@@ -249,9 +230,8 @@ class Player:
                         return f"bad map_changer[{direction}] for map {self.actual_map_key}"
                     
             self.actual_map_key = find_actual_map(self)
-            with open(files["map_position"], 'r+') as file:
-                file_data = json.load(file)
-                pos=file_data[self.actual_map_key]["map_changer"][direction]
+            file_data = read_pkl(files["map_position_db"])
+            pos=file_data[self.actual_map_key]["map_changer"][direction]
             pyautogui.click((pos[0],pos[1]))
             check = confirme_changement_map()
             if check == True:
@@ -340,58 +320,42 @@ class Player:
     def add_ressource_position_on_map(self,ressource_type):
         self.get_window()
         if self.window is not None:
-            try:
-    # Handle JSON file reading and writing
-                with open(files["map_position"], 'r+') as file:
-                    if path.getsize(files["map_position"]) > 0:
-                        file_data = json.load(file)
-                    else:
-                        file_data = {}
-            except json.JSONDecodeError:
-                file_data = {}
-        for key in file_data:
-            if file_data[key]["position"]==self.position:
-                self.actual_map_key=key
-                try:
-                    file_data[key]["ressource"][ressource_type]
-                except:
-                    file_data[key]["ressource"][ressource_type]=[]
-
-                for file in listdir(path.join(directories["photo"],ressource_type)):
-                    seek_picture= path.join(directories["photo"],ressource_type,file)
+            file_data=read_pkl(files["map_position_db"])
+            for key in file_data:
+                if file_data[key]["position"]==self.position:
+                    self.actual_map_key=key
                     try:
-                        image_positions = list(pyautogui.locateAllOnScreen(seek_picture,confidence=0.85))
-                        print(image_positions)
-                        for box in image_positions:
-                            if not (int(box.left),int(box.top)) in file_data[key]["ressource"][ressource_type]:
-                                file_data[key]["ressource"][ressource_type].append((int(box.left),int(box.top)))
-                        file_data.update()
-                        with open(files["map_position"], 'w+') as file:
-                            json.dump(file_data, file, indent=4)
-                    except  Exception as e:
-                        print(e)
+                        file_data[key]["ressource"][ressource_type]
+                    except:
+                        file_data[key]["ressource"][ressource_type]=[]
+
+                    for file in listdir(path.join(directories["photo"],ressource_type)):
+                        seek_picture= path.join(directories["photo"],ressource_type,file)
+                        try:
+                            image_positions = list(pyautogui.locateAllOnScreen(seek_picture,confidence=0.85))
+                            print(image_positions)
+                            for box in image_positions:
+                                if not (int(box.left),int(box.top)) in file_data[key]["ressource"][ressource_type]:
+                                    file_data[key]["ressource"][ressource_type].append((int(box.left),int(box.top)))
+                            file_data.update()
+                            update_pkl(files["map_position_db"],file_data)
+                        except  Exception as e:
+                            print(e)
 
     def collecte_on_know_map(self,ressource_type):
         self.get_window()
         if self.window is not None:
-            try:
-                with open(files["map_position"], 'r+') as file:
-                    if path.getsize(files["map_position"]) > 0:
-                        file_data = json.load(file)
-                    else:
-                        file_data = {}
-            except json.JSONDecodeError:
-                file_data = {}
-        for key in file_data:
-            if file_data[key]["position"]==self.position:
-                self.actual_map_key=key
-                for point in file_data[key]["ressource"][ressource_type]:
-                    pyautogui.click((int(point[0]),int(point[1])))
-                    time.sleep(0.5)
-                    recolte = click_on_picture_once(files["picture_txt_couper"])
-                    if recolte !=None:
-                        time.sleep(12)
-                    # except:
+            file_data=read_pkl(files["map_position_db"])
+            for key in file_data:
+                if file_data[key]["position"]==self.position:
+                    self.actual_map_key=key
+                    for point in file_data[key]["ressource"][ressource_type]:
+                        pyautogui.click((int(point[0]),int(point[1])))
+                        time.sleep(0.5)
+                        recolte = click_on_picture_once(files["picture_txt_couper"])
+                        if recolte !=None:
+                            time.sleep(12)
+                        # except:
 
     
             

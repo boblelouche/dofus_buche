@@ -1,96 +1,106 @@
-# from utility import *
-from math import sqrt
-from Personage import *
-# get_screenshot_region()
-# print(detect_click_left())
-# print(get_pixel_color())
-# save_road('buche_bonta')
-# follow_saved_road(Personage.Taz,'key_masters')
-print(get_pixel_color_on_click())
-# print(find_actual_map("Ironamo"))
-# print('ok')
-# def click_on_picture(picture,zone=(0,0,1920,1080)):
-# def get_map_info(Perso):
-# get_map_name_picture()
-# Iro = Player("Ironamo", 8, 3, "test", 86, [-26,21], "enutrof", ["bucheron" ,"mineur"])
-# direction_dict = {
-#             "u": (1, -1),
-#             "d": (1, 1),
-#             "r": (0, 1),
-#             "l": (0, -1)
-#         }
-# for direction in direction_dict.keys():
+from utility import *
+# from Personage import *
+from imagehash import phash
+# from imagehash import hex_to_hash
+from os import rename,remove
+from config import *
+from json_utility import *
+# Assuming the list is named 'file_list' and 'root' is the directory path
 
-#     index, value = direction_dict[direction]
-#     Iro.position[index] = int(Iro.position[index]) + value
-#     # Iro.position[index] = f'{str(int(Iro.position[index]) + value)}'.replace("'","\"")
-#     print(Iro.position, direction)
-# print(confirme_changement_map())
+def make_image_hash(image_path):
+    image = Image.open(image_path)
+    hash = phash(image)
+    image.close()
+    return hash
 
-def calcule_distance(A,B):
-    return int(sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2))
+# windows=(300,800,1000,50)
 
+def fget_screenshot_region_quad(Perso, region, long):
+    Perso.get_window()
+    if Perso.window is not None:
+        width, height = region[2], region[3]
+        for left in range(0, width, long):
+            for top in range(0, height, long):
+                quad_region = (region[0] + left, region[1] + top, long, long)
+                quad_screenshot = path.join(directories["map"],"quad", f'{left}_{top}.png')
+                pyautogui.screenshot(quad_screenshot, region=quad_region, allScreens=False,)
+                # pyautogui.screenshot()
 
-def remove_closest_point():
+# fget_screenshot_region_quad(Iro,regions["window_dofus"],100)
 
-# # Handle JSON file reading and writing
-    try:
-        with open(files["map_position"], 'r+') as file:
-            if path.getsize(files["map_position"]) > 0:
+def fget_screenshot_region(Perso, region):
+    # Perso.get_window()
+    # time.sleep(1)
+    # if Perso.window is not None:
+        # screenshot_path = path.join(directories["temp"], f'{region[0]}_{region[1]}_{region[2]}_{region[3]}.png')
+        screenshot_path = path.join(directories["temp"], f'{region}.png')
+        pyautogui.screenshot(screenshot_path, region=region, allScreens=False,)
+        return screenshot_path
+    
+
+def test_screenshot_region(Perso):
+    Perso.get_window()
+    time.sleep(1)
+    if Perso.window is not None:
+        for file in listdir(directories["temp"]):
+            remove(path.join(directories["temp"],file))
+        for region in regions.keys():
+            screenshot_path = fget_screenshot_region(Perso,regions[region])
+            nscreenshot_path=screenshot_path.replace(f"{regions[region]}.png",f"{region}_{regions[region]}.png")
+            rename(screenshot_path,nscreenshot_path)
+
+# test_screenshot_region(Iro)    
+
+def compare_picture():
+    liste_pict =["1.png","1bis.png","1ter.png","2.png","3.png"]
+    liste_pict =["1.png","1bis.png","1ter.png","2.png","3.png"]
+    transformed_list = [path.join(directories["map_name"], file) for file in liste_pict]
+    print(transformed_list)
+    hasc = {}
+    with open("test.json","r+") as file:
+        try:
+            if path.getsize("test.json") > 0:
                 file_data = json.load(file)
             else:
                 file_data = {}
-    except json.JSONDecodeError:
-        file_data = {}
-    keys = list(file_data.keys())
-    for key in keys:
-        ressource_types = list(file_data[key]["ressource"].keys())
-        if len(ressource_types)!=0:
-            for ressource_type in ressource_types:
-                checked = []
-                temp=file_data[key]["ressource"][ressource_type]
-                # print(file_data[key]["ressource"][ressource_type])
-                for Point in temp:
-                    checked.append(Point)
-                    temp.remove(Point)                
-                    for Second_point in temp:
-                        if calcule_distance(Point, Second_point)<2000:
-                            file_data[key]["ressource"][ressource_type].remove(Second_point)
-    file_data.update()
-    with open(files["map_position"], 'w+') as file:
-        json.dump(file_data, file, indent=4)               
+        except json.JSONDecodeError:
+            file_data = {}          
 
-def calculate_path(actual_position, destination):
-    distance_x =  sqrt((destination[0]-actual_position[0])**2)
-    distance_y =  sqrt((destination[1]-actual_position[1])**2)
-    if destination[0]<actual_position[0]:
-        distance_x*=-1
-    if destination[1]>actual_position[1]:
-        distance_y*=-1
-    return (distance_x,distance_y)
+    temp=transformed_list
+    checked=[]
+    for pict in transformed_list:
+        # hasc[path.basename(pict)]={"hash":make_image_hash(pict)}
+        hasc[path.basename(pict)]={"hash":str(make_image_hash(pict))}
 
-# calculate_path([-1,1],[2,2])
+    distance={}
+    for Point in temp:
+        h = make_image_hash(Point)
+        hasc[path.basename(Point)]={"hash":h}              
 
-# remove_closest_point()
-# for key in keys:
+    for Point in temp:
+        temp.remove(Point)
+        # for Second_point in temp:
+        #     d = hasc[path.basename(Point)]["hash"]-hasc[path.basename(Point)]["hash"] 
+        #     # print(d)
+    #         hasc[path.basename(Point)][path.basename(Second_point)] =int(d)
+    # for key, values in hasc.items():
+    #     if not key in file_data.keys():
+    #         file_data[key]={}
+    #     for value in values:
+    #         # print(value)
+    #         if value in hasc.keys():
+    #             file_data[key][value] = hasc[value]
+    # for point in transformed_list:
+    #     for key, value in file_data[path.basename(Point)].items():
+    #         if key == 'hash':
+    #             value = str(value)
 
+    # print(hasc)
+    # print(file_data)
+    # file_data.update()
+    # with open("test.json","w+") as file:
+    #     json.dump(file_data, file, indent=4)  
+        # print(type(value), value)
+        # print(key, value)
 
-#             if 'image_hash' in file_data[key]:
-#                 stored_hash = hex_to_hash(file_data[key]['image_hash'])  # Convert the string back to an imagehash object
-#                 if stored_hash == actual_hash:  # Now this comparison should work
-#                     print(f"Image hash found in key: {key}")
-#                     return key
-#         new_key = str(len(keys)+1)
-#         map_changer = find_map_changer()
-#         # print(map_changer)
-#         t = { new_key: {
-#             # "position" :["x","y"],
-#             "position" :actual_position,
-#             "name":"",
-#             "picture_path": path.join(map_name_picture_folder,f'{new_key}.png'),
-#             "image_hash":f'{actual_hash}',
-#             "map_changer": map_changer,
-#             "ressource": {}}}    
-#         file_data.update(t)
-#         with open(files["map_position"], 'w+') as file:
-#             json.dump(file_data, file, indent=4)
+# print(detect_click_left())

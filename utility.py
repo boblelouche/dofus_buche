@@ -1,30 +1,26 @@
 import pyautogui
-# import time
+import time
 import win32api
 from config import *
-from os import rename,listdir
-# from json_utility import write_json
-import json
+from os import rename
 import keyboard
 # from imagehash import average_hash
 from PIL import Image
 from imagehash import phash
 from imagehash import hex_to_hash
 from math import sqrt
+from json_utility import *
+
 
 def make_image_hash(image_path):
     image = Image.open(image_path)
     hash = phash(image)
     image.close()
     return hash
-# print(str(make_image_hash(r"C:\Users\apeir\Documents\code\dofus\temp\actual_map.png")))
 
 # def image_hash2(image_path):
 #     image = Image.open(image_path)
 #     return average_hash(image)
-
-
-
 
 def click_and_confirme(pos):
     pyautogui.click(x=pos.left,y=pos.top)
@@ -38,7 +34,6 @@ def click_and_confirme_absolute(pos):
     time.sleep(1)
     pyautogui.click(x+40, y+40)
 
-
 # time.sleep(collecte_time[ressource_type])
 
 def detect_click_left():
@@ -50,6 +45,19 @@ def detect_click_left():
             if a < 0:
                 return pyautogui.position()
         time.sleep(0.001)
+
+
+def fget_screenshot_region(Perso, region):
+        Perso.get_window()
+        if Perso.window is not None:
+            time.sleep(1)
+            width, height = region[2], region[3]
+            for left in range(0, width, 50):
+                for top in range(0, height, 50):
+                    quad_region = (region[0] + left, region[1] + top, 50, 50)
+                    quad_screenshot = path.join(directories["map_quad"], f'{left}_{top}.png')
+                    pyautogui.screenshot(imageFilename=quad_screenshot, region=quad_region, allScreens=False)
+
 
 def detect_escape():
     state_escape = win32api.GetKeyState(0x1B)  # Escape button up = 0 or 1. Button down = -127 or -128
@@ -79,17 +87,15 @@ def save_road(name):
         if a != state_escape:  # Button state changed
             state_escape = a
             if a < 0:
-
                 new_road = {name: road}
                 file_data.update(new_road)
-
                 with open(files["saved_road"], 'w') as file:
                     json.dump(file_data, file, indent=4)
-
                 return True
         time.sleep(0.1)
         road.append(detect_click_left())
         print(road)
+
 
 def get_map_name_picture(Perso):
     # time.sleep(2)
@@ -100,6 +106,7 @@ def get_map_name_picture(Perso):
         screenshot = pyautogui.screenshot(region=regions["map_name"])
         screenshot.save(screenshot_path)
         return screenshot_path
+
 
 def find_map_changer():
     screen_width, screen_height = pyautogui.size()
@@ -150,23 +157,16 @@ def find_map_changer():
 def find_actual_map(Perso):
     Perso.get_window()
     if Perso.window is not None:
-        try:
-        # Handle JSON file reading and writing
-            with open(files["map_position"], 'r+') as file:
-                if path.getsize(files["map_position"]) > 0:
-                    file_data = json.load(file)
-                else:
-                    file_data = {}
-        except json.JSONDecodeError:
-            file_data = {}
+        file_data=read_pkl(files["map_position_db"])
         map_name_picture =  get_map_name_picture(Perso)
         # time.sleep(1)
         # print(map_name_picture)
         actual_hash = make_image_hash(map_name_picture)
         # print(actual_hash)
         for key, value in file_data.items():
-            if 'image_hash' in value and hex_to_hash(value['image_hash']) == actual_hash:
-                print(f"Image hash found in key: {key}")
+            if 'image_hash' in value:
+                if hex_to_hash(value['image_hash']) - actual_hash <= 5:
+                    print(f"Image hash found in key: {key}")
                 return key
         new_key = str(len(file_data.keys())+1)
         map_changer = find_map_changer()
@@ -180,8 +180,8 @@ def find_actual_map(Perso):
             "map_changer": map_changer,
             "ressource": {}}}    
         file_data.update(t)
-        with open(files["map_position"], 'w+') as file:
-            json.dump(file_data, file, indent=4)
+        update_pkl(files["map_position_db"],file_data)
+
         # rename(map_name_picture, path.join(,f'{key}.png'))
         try:
             rename(map_name_picture, path.join(directories["map_name"],f'{new_key}.png'))
@@ -215,7 +215,9 @@ def get_pixel_color_on_click():
     """
     pos = detect_click_left()
     screenshot = pyautogui.screenshot()
-    print(pos.x,pos.y)
+    # print(pos.x,pos.y)
+    return(pos.x,pos.y)
+    
     pixel = screenshot.getpixel((pos.x,pos.y))
     return pixel
 
@@ -240,6 +242,24 @@ def get_map_info(key):
     screenshot = pyautogui.screenshot()
     pixel = screenshot.getpixel(pos)
     return pixel
+
+def detect_pixel_change_color_on_x(Perso,region):
+    Perso.get_window()
+    if Perso.window is not None:
+        time.sleep(1)
+        x_change_pos=[]
+        screenshot = pyautogui.screenshot(imageFilename=path.join(directories["temp"],'1.png'), region=regions["fight_zone"])
+        init_color=get_pixel_color_on_pos((region[0],region[1]))
+        print(init_color)
+        print(region[0],region[0]+region[2])
+        for i in [region[0],region[0]+region[2]]:
+            color = screenshot.getpixel((i,region[1]))
+            print(color)
+            if color!=init_color:
+                x_change_pos.append((i,region[1]))
+                init_color=color
+            i+=1
+        return x_change_pos
 
 
 def use_ressource(picture_ressource_path):
@@ -286,16 +306,8 @@ def calcule_distance(A,B):
 
 
 def remove_closest_point():
-
 # # Handle JSON file reading and writing
-    try:
-        with open(files["map_position"], 'r+') as file:
-            if path.getsize(files["map_position"]) > 0:
-                file_data = json.load(file)
-            else:
-                file_data = {}
-    except json.JSONDecodeError:
-        file_data = {}
+    file_data=read_pkl(files["map_position_db"])
     keys = list(file_data.keys())
     for key in keys:
         ressource_types = list(file_data[key]["ressource"].keys())
@@ -311,8 +323,8 @@ def remove_closest_point():
                         if calcule_distance(Point, Second_point)<2000:
                             file_data[key]["ressource"][ressource_type].remove(Second_point)
     file_data.update()
-    with open(files["map_position"], 'w+') as file:
-        json.dump(file_data, file, indent=4)               
+    update_pkl(files["map_position_db"],file_data)
+          
 
 def calculate_path(actual_position, destination):
     distance_x =  sqrt((destination[0]-actual_position[0])**2)
@@ -340,3 +352,4 @@ def calculate_path(actual_position, destination):
 # dofus_window = get_window('Laestra')
 # time.sleep(1)
 # click_on_picture(r'C:\Users\apeir\Documents\code\dofus\photo\inventaire_divers_desactivate.png')
+# get_pixel_color_on_click()
