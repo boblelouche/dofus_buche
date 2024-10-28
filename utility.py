@@ -199,7 +199,7 @@ def confirme_changement_map(timeout=15):
         except Exception as e:
             continue
         time.sleep(0.1)
-    raise False
+    return False
 
 
 def get_pixel_color_on_click():

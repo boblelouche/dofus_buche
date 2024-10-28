@@ -21,8 +21,8 @@ db.close()
 
 # Ket.add_ressource_position_on_map("cereal")
 # Ket.collecte_on_know_map("cereal")
-# Lea.position=[-1,0]
-Iro.deplacement("u")
+Iro.position=[0,27]
+Iro.deplacement("d")
 # Iro.add_ressource_position_on_map("bois")
 # Iro.collecte_on_know_map("bois")
 # Iro.go_brak_bank()

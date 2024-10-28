@@ -7,7 +7,7 @@ from config import *
 # t = r'C:\Users\apeir\Documents\code\dofus\map_info\test.json'
 
 def write_json(new_data, filename,object_name):
-    with open(filename,'w+') as file:
+        file = open(filename,'w+')
           # First we load existing data into a dict.
         file_data = json.load(file)
         # Join new_data with file_data inside emp_details
@@ -16,30 +16,37 @@ def write_json(new_data, filename,object_name):
         file.seek(0)
         # convert back to json.
         json.dump(file_data, file, indent = 4)
-
+        file.close()
+        
 def json2pkl(json_file,output_pkl):
     # Load the JSON data
-    with open(json_file, 'r') as jf:
-        data = json.load(jf)
+    jso =  open(json_file, 'r')
+    data = json.load(jso)
 
     # Check if the pkl file already exists
     try:
-        with open(output_pkl, 'rb') as pf:
-            existing_data = pickle.load(pf)
+        dbo =  open(output_pkl, 'rb')
+        existing_data = pickle.load(dbo)
     except (FileNotFoundError, EOFError):
         existing_data = {}
     # Update the existing data with the new data
+    finally:
+        dbo.close()
     existing_data.update(data)
+
     # Write the updated data to the pkl file
-    with open(output_pkl, 'wb') as pf:
-        pickle.dump(existing_data, pf)
+    dbw = open(output_pkl, 'wb')
+    pickle.dump(existing_data, dbw)
 
 def read_pkl(db):
   try:
-    with open(db, 'rb') as pf:
-      existing_data = pickle.load(pf)
+    dbo = open(db, 'rb')
+    existing_data = pickle.load(dbo)
+    dbo.close()
   except (FileNotFoundError, EOFError):
       existing_data = {}
+  finally:
+     dbo.close()
   return existing_data
 
 def update_pkl(db, new_data):
@@ -48,8 +55,10 @@ def update_pkl(db, new_data):
     # Update existing data with new data
     existing_data.update(new_data)
     # Write the updated data back to the pkl file
-    with open(db, 'wb') as pf:
-        pickle.dump(existing_data, pf)
+    
+    dbo = open(db, 'wb')
+    pickle.dump(existing_data, dbo)
+    dbo.close()
 
 # js= r'C:\Users\apeir\Documents\code\dofus\map_info\position.json'
 # db=r'C:\Users\apeir\Documents\code\dofus\map_info\position.pkl'
