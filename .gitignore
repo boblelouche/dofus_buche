@@ -1,5 +1,4 @@
-photo/*
-temp/*
+./temp/*
 .venv/*
 __pycache__/
-LeafMITM/*
+./LeafMITM/*

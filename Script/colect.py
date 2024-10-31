@@ -3,11 +3,15 @@ from config import *
 import pyautogui
 import time
 import pickle
+from Personage import Player
+
 
 db = open(files['db_player'], 'rb')
 Iro, Lea, Taz, Ket = pickle.load(db)
 
 db.close()
+
+
 # for i in range(1):
 # Iro.get_screenshot_region(regions["windows_dofus"])
 # Iro.get_screenshot_region(regions["vie"])

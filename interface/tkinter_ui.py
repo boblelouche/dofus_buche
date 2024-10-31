@@ -25,6 +25,6 @@ position_label.pack()
 copy_button = Button(root, text="Copy Position", command=copy_position)
 copy_button.pack()
 
-display_position()  # start displaying position
+display_position()  # start displaying positionPoint(x=483, y=277)
 
 root.mainloop()

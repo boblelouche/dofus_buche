@@ -1,8 +1,10 @@
-from os import path, listdir
+from os import path, listdir, chdir
 import pygetwindow as gw
 # 
 
-root=r'C:\Users\apeir\Documents\code\dofus'
+# root=r'C:\Users\apeir\Documents\code\dofus'
+root=r'F:\programation\dofus_buche\Script'
+chdir(root)
 combat_sound_file = path.join(root,'son','PULSE.mp3')
 harvest_time = 12
 version = '1.44.5'
@@ -20,7 +22,7 @@ DEPLACEMENT_TIMING_WALK = {
 'diagonal': 0.5
 }
 
-
+list_direcories=["temp","photo","ressource","map_info","combat"]
 
 # Define directories
 directories = {
@@ -35,9 +37,8 @@ directories = {
     "move": path.join(root,'photo', "map", "move"),
     "map_name": path.join(root,'photo', "map", "name"),
     "enemys_pictures":path.join(root,'photo',"enemy"),   
-
 }
-
+print(directories.keys())
 # Define files
 files = {
     # "map_info": path.join(directories["map_info"],'name.json'),
