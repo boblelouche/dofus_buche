@@ -32,8 +32,8 @@ def make_dict_from_photo_folder(db_file, picture_folder):
 def get_info_from_pictures_db(file):
     return read_pkl(file)
 
-# make_dict_from_photo_folder(files['pictures_db'],r"C:\Users\apeir\Documents\code\dofus\photo2")
+make_dict_from_photo_folder(files['pictures_db'], directories["photo"])
 
-# print(get_info_from_pictures_db(files["pictures_db"]))
+print(get_info_from_pictures_db(files["pictures_db"]))
 # t = get_info_from_pictures_db(files["pictures_db"])
 # print(t["screen_type"]["bois"]["inventaire_plein"])

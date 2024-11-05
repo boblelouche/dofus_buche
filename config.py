@@ -30,11 +30,11 @@ directories = {
     "map_info": path.join(root,'map_info'),
     "combat": path.join(root,'resource','photo', "combat"),
     "ressource": path.join(root,'photo', "ressource"),
-    "map": path.join(root,'photo', "map"),
-    "zap": path.join(root,'photo', "map", "zap"),
-    "move": path.join(root,'photo', "map", "move"),
-    "map_name": path.join(root,'photo', "map", "name"),
-    "enemys_pictures":path.join(root,'photo',"enemy"),   
+    "map": path.join(root,'photo', "on_map"),
+    "zap": path.join(root,'photo', "on_map", "zap"),
+    "move": path.join(root,'photo', "on_map", "move"),
+    "map_name": path.join(root,'photo', "on_map", "name"),
+    "enemys_pictures":path.join(root,'photo',"combat","enemy")   
 }
 # print(directories.keys())
 # Define files

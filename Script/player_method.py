@@ -1,6 +1,6 @@
 from config import *
 from utility import *
-
+import json
 
 def fgo_and_vide_on_brak_bank(Perso):
         Perso.go_brak_bank()
@@ -102,7 +102,7 @@ def fverify_actual_map(Perso):
                         return Perso.position
                     
             new_key = str(len(file_data.keys())+1)
-            map_changer = find_map_changer()
+            map_changer = find_map_changer(Perso.window)
             # print(map_changer)
             t = { new_key: {
                 "position" :["x","y"],

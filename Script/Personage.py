@@ -3,13 +3,16 @@ import time
 from config import *
 import keyboard
 from os import path, listdir
-from json_utility import *
-from utility import *
-# from Dd import Monture
+from json_utility import update_pkl
+# from utility import *
+import pickle
+from Dd import Monture
 import pygame
+import json
 from combat import *
 from player_method import *
-
+import logging
+logging.basicConfig(level=logging.INFO)
 
 class Player:
     def __init__(self, name, PA, PM, sort, lvl, position, classe, metier):
@@ -39,9 +42,12 @@ class Player:
         dofus_window.activate()
         # time.sleep(0.5)
         if dofus_window: 
-            self.window = dofus_window 
+            self.window = dofus_window
+            logging.info(f"windows of {self.name} activated") 
         else:
             self.window = None 
+            raise Exception (f"windows of {self.name} not find")
+
 
     def update_player(self):
         with open(files["db_player"], 'rb') as f:
@@ -70,13 +76,13 @@ class Player:
 
     def get_screenshot_region(self, region):
         self.get_window()
-        if self.window is not None:
-            time.sleep(1)
-            # pyautogui.click(position['first_ressource'])
-            # time.sleep(2)
-            screenshot = path.join(directories["temp"],f'screenshot_{self.name}.png')
-            pyautogui.screenshot(imageFilename=screenshot, region=region, allScreens=False)
-            
+        # if self.window is not None:
+        time.sleep(1)
+        # pyautogui.click(position['first_ressource'])
+        # time.sleep(2)
+        screenshot = path.join(directories["temp"],f'screenshot_{self.name}.png')
+        pyautogui.screenshot(imageFilename=screenshot, region=region, allScreens=False)
+        
     def get_screenshot_first_ressouce(self):
         self.get_screenshot_region((1284,318,43,40))
 
@@ -210,6 +216,7 @@ class Player:
             file_data=read_pkl(files["map_position_db"])           
             for key in file_data:
                 if file_data[key]["position"]==self.position:
+                    logging.info(f"actual position knowed")
                     self.position = [int(self.position[0]),int(self.position[1])]
                     self.actual_map_key=key
                     pos=file_data[self.actual_map_key]["map_changer"][direction]
@@ -219,6 +226,7 @@ class Player:
                     # except:
 
                     if check == True:
+                        logging.info(f"{self.name} move to direction : {direction}")
                         time.sleep(0.5)
                         if direction in direction_dict:
                             index, value = direction_dict[direction]
@@ -227,14 +235,19 @@ class Player:
                         self.update_player()
                         return
                     else:
-                        return f"bad map_changer[{direction}] for map {self.actual_map_key}"
-                    
+                        logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
+                        return
+            
+            logging.info(f"{self.position} not in db")        
             self.actual_map_key = find_actual_map(self)
             file_data = read_pkl(files["map_position_db"])
             pos=file_data[self.actual_map_key]["map_changer"][direction]
+            print(pos)
+            logging.info(f"{pos} will be clicked")
             pyautogui.click((pos[0],pos[1]))
             check = confirme_changement_map()
             if check == True:
+                logging.info(f"db_updated {self.name} move to direction : {direction}")
                 time.sleep(0.5)
                 if direction in direction_dict:
                     index, value = direction_dict[direction]
@@ -242,8 +255,8 @@ class Player:
                 self.position = [int(self.position[0]),int(self.position[1])]
                 self.update_player()
             else:
-                return f"bad map_changer[{direction}] for map {self.actual_map_key}"
-
+                logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
+                return
     def colecte_on_road(self,chemin):
         for direction in chemin:
             self.get_window()

@@ -9,8 +9,11 @@ from PIL import Image
 from imagehash import phash
 from imagehash import hex_to_hash
 from math import sqrt
-from json_utility import *
+from json_utility import read_pkl, update_pkl
+import json
+import logging
 
+pictures = read_pkl(files["pictures_db"])
 
 def make_image_hash(image_path):
     image = Image.open(image_path)
@@ -108,50 +111,79 @@ def get_map_name_picture(Perso):
         return screenshot_path
 
 
-def find_map_changer():
-    screen_width, screen_height = pyautogui.size()
-    region = {
-        "l":(screen_width // 10, 0, screen_width // 7, screen_height-250),
-        "r":(screen_width-500, 0, screen_width-250, screen_height-250),
-        "d":(0, screen_height-400, screen_width, screen_height-250)
-    }
-    u=(0, 0, screen_width, 150)
-    map_changer={"l":(),"r":(),"d":(),"u":()}
-    # print(pyautogui.size())
-    for direction in region:
-        for picture in list_pictures["move_arrows"]:
-            try:
-                keyboard.press("a")
-                time.sleep(2)
-                # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                image_positions = list(pyautogui.locateAllOnScreen(picture, region=region[direction], confidence=0.8))       
-                # print(image_positions)
-                if not len(image_positions) == 0:
-                    for box in image_positions:
-                        keyboard.release("a")
-                        map_changer[direction]=(int(box.left), int(box.top+75))
+def find_map_changer(window):
+    # Perso.get_window()
+    # if Perso.window is not None:
+        left = window.left+300
+        top = window.top + 35
+        width = window.width - 600
+        height = window.height -45
+        # window.left, screen_height = pyautogui.size()
+        # window.left, screen_height = window.width, window.height
+        region = {
+            "l":(0, 0, width //10, height),
+            "r":(width-width//10, 0, width//10,  height),
+            "d":(0,height - height//10-210,width, height//10)
+        }
+
+        u=(left, top,width, height//10)
+        print(region)
+
+        map_changer={"l":(),"r":(),"d":(),"u":()}
+        # print(pyautogui.size())
+        keyboard.press("a")
+        time.sleep(2)
+        screenshot_path = path.join(directories['temp'],f'window screenshot.png')
+        screenshot = pyautogui.screenshot(screenshot_path, region=(left,top,width, height))
+        pyautogui.screenshot(path.join(directories['temp'],f'window_up screenshot.png'), region=(left,top,width, height//10))
+        pyautogui.screenshot(path.join(directories['temp'],f'window_down screenshot.png'), region=(left,top+height - height//10-210,width, height//10))
+        pyautogui.screenshot(path.join(directories['temp'],f'window_left screenshot.png'), region=(left,top, width//10, height))
+        pyautogui.screenshot(path.join(directories['temp'],f'window_right screenshot.png'), region=(left+width-width//10,top, width//10, height))
+        keyboard.release("a")
+        for direction in region:
+            for name, picture in pictures["on_map"]["move"].items():
+                if name.startswith("arrow"):
+                    try:
+                        # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
+                        # (image_left, image_top) = pyautogui.locate(picture.path, screenshot_path,region=region[direction], confidence=0.1)       
+                        
+                        print(f"", picture.path)
+                        # (image_left, image_top) = pyautogui.locate(picture.path, screenshot_path, confidence=0.1)       
+                        image = pyautogui.locate(picture.path, screenshot_path, region=region[direction], confidence=0.8)       
+                        
+                        (image_left, image_top) = (image.left ,image.top) 
+
+                        print(f"pos ",image_left, image_top)
+                        # image_positions = list(pyautogui.locateOnWindow(picture.path, windows_title, region=region[direction], confidence=0.8))       
+                        # image_positions = list(pyautogui.locate(picture.path, region=region[direction], confidence=0.8))       
+                        # print(image_positions)
+                        map_changer[direction]=(int(image_left+left), int(image_top+75+top))
+                        screenshot = pyautogui.screenshot(path.join(directories['temp'],f'{image_left}_{image_top}_screenshot.png'), region=(int(image_left)-50,int(image_top)-50,150,150))
                         break
-                    break
-            except Exception as e :
-                keyboard.release("a")
-                # print(e)   
-    for picture in list_pictures["move_stars"]:
-        try:
-            keyboard.press("a")
-            time.sleep(2)
-            # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-            image_positions = list(pyautogui.locateAllOnScreen(picture, region=u, confidence=0.7))       
-            # print(image_positions)
-            if not len(image_positions) == 0:
-                for box in image_positions:
-                    keyboard.release("a")
-                    map_changer["u"]=(int(box.left), int(box.top))
-                    break
-                break
-        except Exception as e :
-            keyboard.release("a")
-            continue
-    return map_changer
+
+                            # for box in image_positions:
+                                
+                                # break
+                    except Exception as e :
+                        logging.info(f"{name} not found")
+                        keyboard.release("a")
+                        # print(e)   
+        for name, picture in pictures["on_map"]["move"].items():
+                if name.startswith("star"):
+                    try:
+                        # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
+                        # (image_left,image_top) = pyautogui.locateOnScreen(picture.path, region=u, confidence=0.8)
+                        image = pyautogui.locate(picture.path, screenshot_path,region=u, confidence=0.7)       
+                        (image_left, image_top) = (image.left ,image.top) 
+
+                        # print(image_positions)
+                        map_changer["u"]=(int(image_left+left), int(image_top+top))
+                        screenshot = pyautogui.screenshot(path.join(directories['temp'],f'{image_left}_{image_top}_screenshot.png'), region=(int(image_left)-50,int(image_top)-50,150,150))
+                        break
+                    except Exception as e :
+                        logging.info(f"{name} not found")
+                        continue
+        return map_changer
 
 
 def find_actual_map(Perso):
@@ -169,7 +201,7 @@ def find_actual_map(Perso):
                     print(f"Image hash found in key: {key}")
                 return key
         new_key = str(len(file_data.keys())+1)
-        map_changer = find_map_changer()
+        map_changer = find_map_changer(Perso.window)
         # print(map_changer)
         t = { new_key: {
             # "position" :["x","y"],

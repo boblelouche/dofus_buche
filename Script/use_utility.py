@@ -103,4 +103,4 @@ def compare_picture():
         # print(type(value), value)
         # print(key, value)
 
-# print(detect_click_left())
+print(detect_click_left())
