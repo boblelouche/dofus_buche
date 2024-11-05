@@ -349,7 +349,4 @@ def calculate_path(actual_position, destination):
                         # time.sleep(1)
         # return "le deplacement n'as pas eu lieu"
         # print("cooldown over")
-# dofus_window = get_window('Laestra')
-# time.sleep(1)
-# click_on_picture(r'C:\Users\apeir\Documents\code\dofus\photo\inventaire_divers_desactivate.png')
-# get_pixel_color_on_click()
+#

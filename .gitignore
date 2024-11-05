@@ -1,4 +1,6 @@
-./temp/*
+photo/
+temp/*
 .venv/*
 __pycache__/
-./LeafMITM/*
+LeafMITM
+*.pkl

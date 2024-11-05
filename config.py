@@ -1,10 +1,8 @@
-from os import path, listdir, chdir
+from os import path, listdir, chdir, getcwd
 import pygetwindow as gw
-# 
 
-# root=r'C:\Users\apeir\Documents\code\dofus'
-root=r'F:\programation\dofus_buche\Script'
-chdir(root)
+
+root = getcwd()
 combat_sound_file = path.join(root,'son','PULSE.mp3')
 harvest_time = 12
 version = '1.44.5'
@@ -38,7 +36,7 @@ directories = {
     "map_name": path.join(root,'photo', "map", "name"),
     "enemys_pictures":path.join(root,'photo',"enemy"),   
 }
-print(directories.keys())
+# print(directories.keys())
 # Define files
 files = {
     # "map_info": path.join(directories["map_info"],'name.json'),
@@ -60,6 +58,7 @@ files = {
     "db_player": path.join(root,"players.pkl"),
     "map_position": path.join(directories["map_info"],"position.json"),
     "map_position_db": path.join(directories["map_info"],"position.pkl"),
+    "pictures_db": path.join(root,"picture_db.pkl"),
     "xy_cell":path.join(directories["map_info"],"xy_cell.json"),
     "saved_road": path.join(directories["map_info"],'saved_road.json')
     
@@ -124,11 +123,11 @@ resource_lists = {
 }
 
 # Define pictures
-list_pictures = {
-    "zap": [path.join(directories["zap"],f) for f in listdir(directories["zap"]) if f.startswith('zap')],
-    "move_arrows": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('arrow')],
-    "move_stars": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('star')],
-    "bucheron_enemys":[path.join(directories["enemys_pictures"],"bucheron",f) for f in listdir(path.join(directories["enemys_pictures"],"bucheron"))]
-}
-# with open(files['db_player'], 'rb') as f:
-#     Iro, Lea, Taz = pickle.load(f)
+# list_pictures = {
+#     "zap": [path.join(directories["zap"],f) for f in listdir(directories["zap"]) if f.startswith('zap')],
+#     "move_arrows": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('arrow')],
+#     "move_stars": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('star')],
+#     "bucheron_enemys":[path.join(directories["enemys_pictures"],"bucheron",f) for f in listdir(path.join(directories["enemys_pictures"],"bucheron"))]
+# }
+# # with open(files['db_player'], 'rb') as f:
+# #     Iro, Lea, Taz = pickle.load(f)

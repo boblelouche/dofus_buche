@@ -25,10 +25,12 @@ db.close()
 
 # Ket.add_ressource_position_on_map("cereal")
 # Ket.collecte_on_know_map("cereal")
-Iro.position=[0,27]
-Iro.deplacement("d")
-# Iro.add_ressource_position_on_map("bois")
-# Iro.collecte_on_know_map("bois")
+# Iro.position=[0,32]
+# Iro.update_player()
+print(Iro.position)
+# Iro.deplacement("d")
+Iro.add_ressource_position_on_map("bois")
+Iro.collecte_on_know_map("bois")
 # Iro.go_brak_bank()
 # print(Iro.position)
 # get_window(Iro.name)
