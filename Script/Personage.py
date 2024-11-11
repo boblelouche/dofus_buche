@@ -34,19 +34,57 @@ class Player:
         self.collecte_tour = 0 
         # self.window = self.get_window()
         self.window = None
+        self.window_resolution = None
+        self.window_activate = False
     
+    def active_player(self):
+        self.window.activate()
+        self.window_activate = True
     
     def get_window(self):
         dofus_window_name = f'{self.name} - Dofus Retro v{version}'
-        dofus_window = gw.getWindowsWithTitle(dofus_window_name)[0]
-        dofus_window.activate()
-        # time.sleep(0.5)
-        if dofus_window: 
-            self.window = dofus_window
-            logging.info(f"windows of {self.name} activated") 
-        else:
+        try :
+            self.window = gw.getWindowsWithTitle(dofus_window_name)[0]
+        except IndexError as e:
+            self.logg_player()
+            self.window = gw.getWindowsWithTitle(dofus_window_name)[0]
             self.window = None 
-            raise Exception (f"windows of {self.name} not find")
+   
+                         # raise 
+            # raise "Not logged"
+        # print(dofus_window)
+        # time.sleep(0.5)
+         
+        self.active_player()
+        # self.window_resolution = self.window.resolution()
+        # self.window_activate = True
+        logging.info(f"windows of {self.name} activated") 
+   
+    def logg_player(self):
+        dofus_window_lancher = f'Dofus Retro v{version}'
+        try :
+            dofus_launcher = gw.getWindowsWithTitle(dofus_window_lancher)[0]
+        except IndexError as e:
+            # raise 
+            return "Not launched"
+        dofus_launcher.activate()
+        dofus_launcher.maximize()
+        pyautogui.click((670,456))
+        time.sleep(1.5)
+        pyautogui.click((490,557))
+        time.sleep(2)
+        pyautogui.click((490,557))
+        time.sleep(2)
+        pyautogui.doubleClick((490,557))
+        time.sleep(1.5)
+        # pyautogui.click((490,557))
+
+        # self.window = dofus_launcher
+        # self.window_resolution = self.window.resolution()   
+        logging.info(f"{self.name} have been logged") 
+
+
+
 
 
     def update_player(self):
@@ -75,7 +113,10 @@ class Player:
         fvider_ressource_on_bank(self)
 
     def get_screenshot_region(self, region):
-        self.get_window()
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
+        
         # if self.window is not None:
         time.sleep(1)
         # pyautogui.click(position['first_ressource'])
@@ -112,79 +153,81 @@ class Player:
 
     def detect_full_inventory(self):
         # global inventory_full
-        self.get_window()
-        if self.window is not None:
-            self.detect_inventory_open()
-            if self.inventory_open ==0:
-                keyboard.press_and_release("i")
-                time.sleep(1)
-            time.sleep(2)
-            screenshot = pyautogui.screenshot()
-            # print(screenshot.getpixel(position['inventory_max']))
-            pixel = screenshot.getpixel(positions['inventory_max'])
-            print(pixel)
-            if pixel == colors["inventory_full"]:
-                self.inventory_full = 1
-                self.update_player()
-                print("inventaire plein")
-            else:
-                self.inventory_full = 0
-                self.update_player()
-                # pyautogui.locateAllOnScreen(attack_case,confidence=0.90)        
-                print("on peut continuer")
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
+        self.detect_inventory_open()
+        if self.inventory_open ==0:
             keyboard.press_and_release("i")
-            # return inventory_full
-    
+            time.sleep(1)
+        time.sleep(2)
+        screenshot = pyautogui.screenshot()
+        # print(screenshot.getpixel(position['inventory_max']))
+        pixel = screenshot.getpixel(positions['inventory_max'])
+        print(pixel)
+        if pixel == colors["inventory_full"]:
+            self.inventory_full = 1
+            self.update_player()
+            print("inventaire plein")
+        else:
+            self.inventory_full = 0
+            self.update_player()
+            # pyautogui.locateAllOnScreen(attack_case,confidence=0.90)        
+            print("on peut continuer")
+        keyboard.press_and_release("i")
+        # return inventory_full
+
     def detect_inventory_75(self):
         # global inventory_full
-        self.get_window()
-        if self.window is not None:
-            self.detect_inventory_open()
-            if self.inventory_open ==0:
-                keyboard.press_and_release("i")
-                time.sleep(1)
-            time.sleep(2)
-            screenshot = pyautogui.screenshot()
-            # print(screenshot.getpixel(position['inventory_max']))
-            pixel = screenshot.getpixel(positions['inventory_75'])
-            print(pixel)
-            if pixel == colors["inventory_full"]:
-                self.inventory_75 = 1
-                self.update_player()
-                # print("inventaire plein")
-            else:
-                self.inventory_75 = 0
-                self.update_player()
-                # pyautogui.locateAllOnScreen(attack_case,confidence=0.90)        
-                print("on peut continuer")
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
+        
+        self.detect_inventory_open()
+        if self.inventory_open ==0:
             keyboard.press_and_release("i")
-            # return inventory_full
+            time.sleep(1)
+        time.sleep(2)
+        screenshot = pyautogui.screenshot()
+        # print(screenshot.getpixel(position['inventory_max']))
+        pixel = screenshot.getpixel(positions['inventory_75'])
+        print(pixel)
+        if pixel == colors["inventory_full"]:
+            self.inventory_75 = 1
+            self.update_player()
+            # print("inventaire plein")
+        else:
+            self.inventory_75 = 0
+            self.update_player()
+            # pyautogui.locateAllOnScreen(attack_case,confidence=0.90)        
+            print("on peut continuer")
+        keyboard.press_and_release("i")
+        # return inventory_full
     
 
     def detect_inventory_open(self):
-        self.get_window()
-        if self.window is not None:
-            time.sleep(1)
-            try:
-                # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                image_positions = list(pyautogui.locateAllOnScreen(files["ton_inventaire.png"], region=regions["teste_inventory"], confidence=0.7))       
-                # print(image_positions)
-                if not len(list(image_positions)) == 0:
-                    print("inventory detected open")
-                    self.inventory_open = 1
-                    self.update_player()
-                else:
-                    print("inventory detected not open")
-                    self.inventory_open = 0
-                    self.update_player()
-
-            except:
-                print("inventory not detected ")
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
+        time.sleep(1)
+        try:
+            # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
+            image_positions = list(pyautogui.locateAllOnScreen(files["ton_inventaire.png"], region=regions["teste_inventory"], confidence=0.7))       
+            # print(image_positions)
+            if not len(list(image_positions)) == 0:
+                print("inventory detected open")
+                self.inventory_open = 1
+                self.update_player()
+            else:
+                print("inventory detected not open")
                 self.inventory_open = 0
                 self.update_player()
-        else:
-            return None
-    
+
+        except:
+            print("inventory not detected ")
+            self.inventory_open = 0
+            self.update_player()
+
     
     def test(self):
         if self.inventory_open ==1:
@@ -197,8 +240,9 @@ class Player:
 
 
     def follow_saved_road(self,road_name):
-        self.get_window()
-        if self.window is not None:
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
             with open(files["saved_road"], 'r') as file:
                 data = json.load(file)
                 # print(data[road_name])
@@ -210,67 +254,65 @@ class Player:
 
     def move_map(self,direction):
         # check=None
-        self.get_window()
-        if self.window is not None:
-            direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
-            file_data=read_pkl(files["map_position_db"])           
-            for key in file_data:
-                if file_data[key]["position"]==self.position:
-                    logging.info(f"actual position knowed")
-                    self.position = [int(self.position[0]),int(self.position[1])]
-                    self.actual_map_key=key
-                    pos=file_data[self.actual_map_key]["map_changer"][direction]
-                    pyautogui.click((pos[0],pos[1]))
-                    # try:
-                    check = confirme_changement_map()
-                    # except:
-
-                    if check == True:
-                        logging.info(f"{self.name} move to direction : {direction}")
-                        time.sleep(0.5)
-                        if direction in direction_dict:
-                            index, value = direction_dict[direction]
-                            self.position[index] = self.position[index] + value
-                                                
-                        self.update_player()
-                        return
-                    else:
-                        logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
-                        return
-            
-            logging.info(f"{self.position} not in db")        
-            self.actual_map_key = find_actual_map(self)
-            file_data = read_pkl(files["map_position_db"])
-            pos=file_data[self.actual_map_key]["map_changer"][direction]
-            print(pos)
-            logging.info(f"{pos} will be clicked")
-            pyautogui.click((pos[0],pos[1]))
-            check = confirme_changement_map()
-            if check == True:
-                logging.info(f"db_updated {self.name} move to direction : {direction}")
-                time.sleep(0.5)
-                if direction in direction_dict:
-                    index, value = direction_dict[direction]
-                    self.position[index] = self.position[index] + value
-                self.position = [int(self.position[0]),int(self.position[1])]
-                self.update_player()
-            else:
-                logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
-                return
-    def colecte_on_road(self,chemin):
-        for direction in chemin:
+        if self.window == None or self.window_activate !=True:
             self.get_window()
-            if self.window is not None:
-                self.alamano("bois")
-                self.move_map(direction)
-                # time.sleep(2)
+       
+        direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
+        file_data=read_pkl(files["map_position_db"])           
+        for key in file_data:
+            if file_data[key]["position"]==self.position:
+                logging.info(f"actual position knowed")
+                self.position = [int(self.position[0]),int(self.position[1])]
+                self.actual_map_key=key
+                pos=file_data[self.actual_map_key]["map_changer"][direction]
+                pyautogui.click((pos[0],pos[1]))
+                # try:
+                check = confirme_changement_map()
+                # except:
 
+                if check == True:
+                    logging.info(f"{self.name} move to direction : {direction}")
+                    time.sleep(0.5)
+                    if direction in direction_dict:
+                        index, value = direction_dict[direction]
+                        self.position[index] = self.position[index] + value
+                                            
+                    self.update_player()
+                    return
+                else:
+                    logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
+                    return
+        
+        logging.info(f"{self.position} not in db")        
+        self.actual_map_key = find_actual_map(self)
+        file_data = read_pkl(files["map_position_db"])
+        pos=file_data[self.actual_map_key]["map_changer"][direction]
+        print(pos)
+        logging.info(f"{pos} will be clicked")
+        pyautogui.click((pos[0],pos[1]))
+        check = confirme_changement_map()
+        if check == True:
+            logging.info(f"db_updated {self.name} move to direction : {direction}")
+            time.sleep(0.5)
+            if direction in direction_dict:
+                index, value = direction_dict[direction]
+                self.position[index] = self.position[index] + value
+            self.position = [int(self.position[0]),int(self.position[1])]
+            self.update_player()
+        else:
+            logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
+            return
+
+    
 
     def deplacement(self, chemin):
-        self.get_window()
-        if self.window is not None:
-            for s in chemin :
-                self.move_map(s)
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+        # print(self.window)
+        # if self.window_activate !=True:
+        #     self.get_window()
+        for s in chemin :
+            self.move_map(s)
 
         
     def collecte(self, seek_picture):
@@ -299,8 +341,9 @@ class Player:
 
 
     def alamano(self,ressource_type):
-        self.get_window()
-        if self.window is not None:
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
             it=0
             while it<3:
                 for element in resource_lists[ressource_type]:
@@ -331,8 +374,9 @@ class Player:
 
 
     def add_ressource_position_on_map(self,ressource_type):
-        self.get_window()
-        if self.window is not None:
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
             file_data=read_pkl(files["map_position_db"])
             for key in file_data:
                 if file_data[key]["position"]==self.position:
@@ -356,8 +400,9 @@ class Player:
                             print(e)
 
     def collecte_on_know_map(self,ressource_type):
-        self.get_window()
-        if self.window is not None:
+        if self.window == None or self.window_activate !=True:
+            self.get_window()
+       
             file_data=read_pkl(files["map_position_db"])
             for key in file_data:
                 if file_data[key]["position"]==self.position:
