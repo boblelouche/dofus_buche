@@ -15,12 +15,13 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 class Player:
-    def __init__(self, name, PA, PM, sort, lvl, position, classe, metier):
+    def __init__(self, name, PA, PM, sort, lvl, position, classe, metier, hash_name=None):
         self.PA = PA
         self.PM = PM
         self.name = name
         self.sort = sort
         self.lvl = lvl
+        self.hash_name = hash_name
         self.position = position
         self.actual_map_key= None
         self.classe = classe
@@ -32,13 +33,30 @@ class Player:
         self.monture = None
         self.in_combat = 0    
         self.collecte_tour = 0 
+        self.variation = 0
+        self.playing_time = False
         # self.window = self.get_window()
         self.window = None
         self.window_resolution = None
         self.window_activate = False
-    
+        self.last_click_pos = None
+        self.color = colors["inventory_empty"]
+
+
     def active_player(self):
-        self.window.activate()
+        try:
+            try:
+        #implementation
+                self.window.activate()
+            except Exception as e:
+                if e.__class__.__name__ == 'PyGetWindowException':
+             #handle exception
+                    print('mini pb')
+                else:
+                    raise e
+
+        except Exception as e:
+            print("gros pb")
         self.window_activate = True
     
     def get_window(self):
@@ -48,13 +66,6 @@ class Player:
         except IndexError as e:
             self.logg_player()
             self.window = gw.getWindowsWithTitle(dofus_window_name)[0]
-            self.window = None 
-   
-                         # raise 
-            # raise "Not logged"
-        # print(dofus_window)
-        # time.sleep(0.5)
-         
         self.active_player()
         # self.window_resolution = self.window.resolution()
         # self.window_activate = True
@@ -69,14 +80,21 @@ class Player:
             return "Not launched"
         dofus_launcher.activate()
         dofus_launcher.maximize()
+
+
+        pyautogui.click((936,548))
+        time.sleep(0.5)
+        pyautogui.click((490,557))
+        time.sleep(2)
         pyautogui.click((670,456))
-        time.sleep(1.5)
+        time.sleep(2)
         pyautogui.click((490,557))
         time.sleep(2)
         pyautogui.click((490,557))
         time.sleep(2)
         pyautogui.doubleClick((490,557))
         time.sleep(1.5)
+        pyautogui.doubleClick((490,557))
         # pyautogui.click((490,557))
 
         # self.window = dofus_launcher
@@ -84,18 +102,19 @@ class Player:
         logging.info(f"{self.name} have been logged") 
 
 
-
-
-
     def update_player(self):
-        with open(files["db_player"], 'rb') as f:
-            players = pickle.load(f)
+        f = open(files["db_player"], 'rb')
+        players = pickle.load(f)
         for i, player in enumerate(players):
             if player.name == self.name:
                 players[i] = self
                 break
-        with open(files["db_player"], 'wb') as f:
-            pickle.dump(players, f)
+        f.close()
+        d= open(files["db_player"], 'wb')
+        # print(players)
+        # players.update()
+        pickle.dump(players, d)
+        d.close()
 
     def go_brak_bank(self):
         fgo_brak_bank(self)
@@ -103,10 +122,6 @@ class Player:
 
     def go_and_vide_on_brak_bank(self):
         fgo_and_vide_on_brak_bank(self)
-
-
-    def verify_actual_map(self):
-        fverify_actual_map(self)
 
 
     def vider_ressource_on_bank(self):
@@ -253,55 +268,58 @@ class Player:
 
 
     def move_map(self,direction):
-        # check=None
-        if self.window == None or self.window_activate !=True:
-            self.get_window()
-       
-        direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
-        file_data=read_pkl(files["map_position_db"])           
-        for key in file_data:
-            if file_data[key]["position"]==self.position:
-                logging.info(f"actual position knowed")
-                self.position = [int(self.position[0]),int(self.position[1])]
-                self.actual_map_key=key
-                pos=file_data[self.actual_map_key]["map_changer"][direction]
-                pyautogui.click((pos[0],pos[1]))
-                # try:
-                check = confirme_changement_map()
-                # except:
-
-                if check == True:
-                    logging.info(f"{self.name} move to direction : {direction}")
-                    time.sleep(0.5)
-                    if direction in direction_dict:
-                        index, value = direction_dict[direction]
-                        self.position[index] = self.position[index] + value
-                                            
-                    self.update_player()
-                    return
-                else:
-                    logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
-                    return
+        return fmove_map(self, direction)
         
-        logging.info(f"{self.position} not in db")        
-        self.actual_map_key = find_actual_map(self)
-        file_data = read_pkl(files["map_position_db"])
-        pos=file_data[self.actual_map_key]["map_changer"][direction]
-        print(pos)
-        logging.info(f"{pos} will be clicked")
-        pyautogui.click((pos[0],pos[1]))
-        check = confirme_changement_map()
-        if check == True:
-            logging.info(f"db_updated {self.name} move to direction : {direction}")
-            time.sleep(0.5)
-            if direction in direction_dict:
-                index, value = direction_dict[direction]
-                self.position[index] = self.position[index] + value
-            self.position = [int(self.position[0]),int(self.position[1])]
-            self.update_player()
-        else:
-            logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
-            return
+        # check=None
+        # if self.window == None or self.window_activate !=True:
+        #     self.get_window()
+    def find_actual_map(self):
+           return ffind_actual_map(self)
+        # direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
+        # file_data=read_pkl(files["map_position_db"])           
+        # for key in file_data:
+        #     if file_data[key]["position"]==self.position:
+        #         logging.info(f"actual position knowed")
+        #         self.position = [int(self.position[0]),int(self.position[1])]
+        #         self.actual_map_key=key
+        #         pos=file_data[self.actual_map_key]["map_changer"][direction]
+        #         pyautogui.click((pos[0],pos[1]))
+        #         # try:
+        #         check = confirme_changement_map()
+        #         # except:
+
+        #         if check == True:
+        #             logging.info(f"{self.name} move to direction : {direction}")
+        #             time.sleep(0.5)
+        #             if direction in direction_dict:
+        #                 index, value = direction_dict[direction]
+        #                 self.position[index] = self.position[index] + value
+                                            
+        #             self.update_player()
+        #             return
+        #         else:
+        #             logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
+        #             return
+        
+        # logging.info(f"{self.position} not in db")        
+        # self.actual_map_key = find_actual_map(self)
+        # file_data = read_pkl(files["map_position_db"])
+        # pos=file_data[self.actual_map_key]["map_changer"][direction]
+        # print(pos)
+        # logging.info(f"{pos} will be clicked")
+        # pyautogui.click((pos[0],pos[1]))
+        # check = confirme_changement_map()
+        # if check == True:
+        #     logging.info(f"db_updated {self.name} move to direction : {direction}")
+        #     time.sleep(0.5)
+        #     if direction in direction_dict:
+        #         index, value = direction_dict[direction]
+        #         self.position[index] = self.position[index] + value
+        #     self.position = [int(self.position[0]),int(self.position[1])]
+        #     self.update_player()
+        # else:
+        #     logging.warning(f"bad map_changer[{direction}] for map {self.actual_map_key}")
+        #     return
 
     
 

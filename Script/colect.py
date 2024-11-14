@@ -25,7 +25,7 @@ db.close()
 
 # Ket.add_ressource_position_on_map("cereal")
 # Ket.collecte_on_know_map("cereal")
-Iro.position=[4,-19]
+# Iro.position=[20,-25]
 # Iro.update_player()
 # print(Iro.position)
 Iro.deplacement("d")

@@ -28,7 +28,8 @@ directories = {
     "photo": path.join(root,'photo'),
     "resource": path.join(root,'resource'),
     "map_info": path.join(root,'map_info'),
-    "combat": path.join(root,'resource','photo', "combat"),
+    # "combat": path.join(root,'resource','photo', "combat"),
+    "combat": path.join(root,'photo', "combat"),
     "ressource": path.join(root,'photo', "ressource"),
     "map": path.join(root,'photo', "on_map"),
     "zap": path.join(root,'photo', "on_map", "zap"),
@@ -55,6 +56,10 @@ files = {
     "zapy_div_act": path.join(directories["photo"],'zapy_Divers_activate.png'),
     "zapy_arene": path.join(directories["photo"],'zapy_arene.png'),
     "zapy_bank": path.join(directories["photo"],'zapy_bank.png'),
+    "actual_tour": path.join(directories["combat"],"player_miniature",'actual_tour.png'),
+    "actual_tour2": path.join(directories["combat"],"player_miniature",'actual_tour2.png'),
+    "actual_tour3": path.join(directories["combat"],"player_miniature",'actual_tour3.png'),
+    "connect": path.join(directories["photo"],'Se connecter.png'),
     "db_player": path.join(root,"players.pkl"),
     "map_position": path.join(directories["map_info"],"position.json"),
     "map_position_db": path.join(directories["map_info"],"position.pkl"),
@@ -103,9 +108,16 @@ regions = {
     "map_name": (450,60,100,60),
     "combat_mini":(290,690,1390,100),
     "chat":(299,800,705,201),
-    "vie":(1000,790,80,80),
-    "sort_zone":(1100,890,470,110),    
+    "vie_centre":(1000,790,80,80),
+    "sort_zone":(1100,890,470,110),
+    "perso_info":(1185,810,300,100),
+    "miniature_name":(1320,810,130,25),    
+    "vie":(1320,810,130,25),
+    "PA":(1320,810,130,25),
+    "PM":(1320,810,130,25),
+    
     "chall_zone":(312,135,75,210),
+
     "fight_zone":(299,19,1299,800)
 }
 
