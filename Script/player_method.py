@@ -1,8 +1,8 @@
 from config import *
 from utility import *
 import json
-
-
+import cv2 as cv
+import numpy as np
 
 def fgo_and_vide_on_brak_bank(Perso):
     Perso.go_brak_bank()
@@ -110,7 +110,7 @@ def ffind_actual_map(Perso):
     # time.sleep(1)
     # print(map_name_picture)
     actual_hash = make_image_hash(map_name_picture)
-    print(actual_hash)
+    # print(actual_hash)
     file_data=read_pkl(files["map_position_db"])
     for key, value in file_data.items():
         if 'image_hash' in value:
@@ -121,16 +121,17 @@ def ffind_actual_map(Perso):
     new_key = str(len(file_data.keys())+1)
     # map_changer = find_map_changer(Perso.window)
     # print(map_changer)
-    t = { new_key: {
+    t = {}
+    t[new_key]={
         # "position" :["x","y"],
         "position" :f'{Perso.position}',
         "name":"",
         "picture_path": path.join(directories["map_name"],f'{new_key}.png'),
         "image_hash":f'{actual_hash}',
         "map_changer": find_map_changer(Perso.window),
-        "ressource": {}}}    
-    file_data.update(t)
-    update_pkl(files["map_position_db"],file_data)
+        "ressource": {}}
+    # file_data.update(t)
+    update_pkl(files["map_position_db"],t)
 
     # rename(map_name_picture, path.join(,f'{key}.png'))
     try:
@@ -140,6 +141,7 @@ def ffind_actual_map(Perso):
     return new_key
 
 
+
 def find_map_changer(window):
     # Perso.get_window()
     # if Perso.window is not None:
@@ -147,64 +149,48 @@ def find_map_changer(window):
         top = window.top + 35
         width = window.width - 600
         height = window.height -45
-        # window.left, screen_height = pyautogui.size()
-        # window.left, screen_height = window.width, window.height
         region = {
             "l":(0, 0, width //10, height),
             "r":(width-width//10, 0, width//10,  height),
             "d":(0,height - height//10-210,width, height//10)
         }
-
+      
         u=(left, top,width, height//10)
-        print(region)
-
         map_changer={"l":(),"r":(),"d":(),"u":()}
-        # print(pyautogui.size())
         keyboard.press("a")
         time.sleep(2)
         screenshot_path = path.join(directories['temp'],f'window screenshot.png')
         screenshot = pyautogui.screenshot(screenshot_path, region=(left,top,width, height))
-        pyautogui.screenshot(path.join(directories['temp'],f'window_up screenshot.png'), region=(left,top,width, height//10))
-        pyautogui.screenshot(path.join(directories['temp'],f'window_down screenshot.png'), region=(left,top+height - height//10-210,width, height//10))
-        pyautogui.screenshot(path.join(directories['temp'],f'window_left screenshot.png'), region=(left,top, width//10, height))
-        pyautogui.screenshot(path.join(directories['temp'],f'window_right screenshot.png'), region=(left+width-width//10,top, width//10, height))
         keyboard.release("a")
+        haystack = cv.imread(screenshot_path)
+        screenshotl=haystack[0:0+height-210,0:0+width//10]
+        screenshotd=haystack[0+height-height//10-210:0+height-210,0:0+width]
+        screenshotr=haystack[0:0+height-210,0+width-width//10:0+width]
+        screenshot_region = {
+            "l":screenshotl,
+            "r":screenshotr,
+            "d":screenshotd
+        }
+
         for direction in region:
             for name, picture in pictures["on_map"]["move"].items():
                 if name.startswith("arrow"):
                     try:
-                        # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                        # (image_left, image_top) = pyautogui.locate(picture.path, screenshot_path,region=region[direction], confidence=0.1)       
-                        
-                        print(f"", picture.path)
-                        # (image_left, image_top) = pyautogui.locate(picture.path, screenshot_path, confidence=0.1)       
-                        image = pyautogui.locate(picture.path, screenshot_path, region=region[direction], confidence=0.8)       
-                        
-                        (image_left, image_top) = (image.left ,image.top) 
-
-                        print(f"pos ",image_left, image_top)
-                        # image_positions = list(pyautogui.locateOnWindow(picture.path, windows_title, region=region[direction], confidence=0.8))       
-                        # image_positions = list(pyautogui.locate(picture.path, region=region[direction], confidence=0.8))       
-                        # print(image_positions)
-                        map_changer[direction]=(int(image_left+left), int(image_top+75+top))
+                        (min_x ,min_y) = locate_in_picture(screenshot_region[direction], picture.path)
+                        (image_left, image_top) = (region[direction][0]+min_x+left+15 ,region[direction][1]+min_y+top+40) 
+                        logging.debug(f"arrow {direction}",image_left, image_top)
+                        map_changer[direction]=(int(image_left), int(image_top))
                         screenshot = pyautogui.screenshot(path.join(directories['temp'],f'{image_left}_{image_top}_screenshot.png'), region=(int(image_left)-50,int(image_top)-50,150,150))
                         break
-
-                            # for box in image_positions:
-                                
-                                # break
                     except Exception as e :
-                        logging.info(f"{name} not found")
+                        logging.info(f"{name} not found {e}")
                         keyboard.release("a")
                         # print(e)   
         for name, picture in pictures["on_map"]["move"].items():
                 if name.startswith("star"):
                     try:
-                        # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                        # (image_left,image_top) = pyautogui.locateOnScreen(picture.path, region=u, confidence=0.8)
                         image = pyautogui.locate(picture.path, screenshot_path,region=u, confidence=0.7)       
                         (image_left, image_top) = (image.left ,image.top) 
-
                         # print(image_positions)
                         map_changer["u"]=(int(image_left+left), int(image_top+top))
                         screenshot = pyautogui.screenshot(path.join(directories['temp'],f'{image_left}_{image_top}_screenshot.png'), region=(int(image_left)-50,int(image_top)-50,150,150))
@@ -216,19 +202,34 @@ def find_map_changer(window):
 
 
 
+
+
+def locate_in_picture(haystack, needle_path):
+    needle = cv.imread(needle_path)
+    scGray = cv.cvtColor(np.array(haystack.astype(np.float32)), cv.COLOR_RGB2GRAY)
+    needleGray = cv.cvtColor(np.array(needle.astype(np.float32)), cv.COLOR_RGB2GRAY)
+    result = cv.matchTemplate(scGray, needleGray, cv.TM_CCOEFF_NORMED)
+    minVal, maxVal, minLoc, maxLoc = cv.minMaxLoc(result)
+    # print(minVal, maxVal, minLoc, maxLoc )
+    return minLoc
+
+
+
 def fmove_map(Perso, direction):
-        # check=None
+        # check=None    
     if Perso.window == None or Perso.window_activate !=True:
         Perso.get_window()
     
     direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
     file_data=read_pkl(files["map_position_db"])           
+    print(file_data.keys())
     for key in file_data:
         if file_data[key]["position"]==Perso.position:
             logging.info(f"actual position knowed")
             Perso.position = [int(Perso.position[0]),int(Perso.position[1])]
             Perso.actual_map_key=key
             if file_data[Perso.actual_map_key]["map_changer"][direction]==():
+                print(key, Perso.actual_map_key, Perso.position)
                 find_map_changer(Perso.window)
                 return "direction move not know"    
             else:
@@ -255,6 +256,8 @@ def fmove_map(Perso, direction):
     logging.info(f"{Perso.position} not in db")        
     Perso.actual_map_key = ffind_actual_map(Perso)
     # file_data = read_pkl(files["map_position_db"])
+    file_data=read_pkl(files["map_position_db"])           
+    print(file_data.keys(),Perso.actual_map_key, direction)
     pos=file_data[Perso.actual_map_key]["map_changer"][direction]
     print(pos)
     logging.info(f"{pos} will be clicked")

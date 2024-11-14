@@ -1,6 +1,7 @@
+
 from os import path
 import utility   
-from json_utility import update_pkl , read_pkl
+# from json_utility import update_pkl , read_pkl
 
 class Picture:
     def __init__(self, path, name,screen_type, category ):
@@ -16,3 +17,4 @@ class Picture:
     
     def __str__(self):
         return str(self.hash)
+

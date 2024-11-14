@@ -232,6 +232,6 @@ def follow(Groupe):
 
 allStar = Groupe(Iro, [Lea])
 # allStar = Groupe(Iro, Lea)
-allStar.gfollow()
-# allStar.gcombat()
+# allStar.gfollow()
+allStar.gcombat()
 # allStar.detect_actual_caract()

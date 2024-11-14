@@ -4,3 +4,5 @@ temp/*
 __pycache__/
 LeafMITM
 *.pkl
+**/*.pkl
+Script/FindObjects.py
