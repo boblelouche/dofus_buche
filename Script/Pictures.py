@@ -1,4 +1,4 @@
-import utility
+from .utility import make_image_hash
 # from json_utility import update_pkl , read_pkl
 
 
@@ -8,7 +8,7 @@ class Picture:
         self.screen_type = screen_type
         self.category = category
         self.name = name
-        self.hash = utility.make_image_hash(self.path)
+        self.hash = make_image_hash(self.path)
 
     def __repr__(self):
         cls = self.__class__

@@ -4,7 +4,7 @@ import keyboard
 from os import path, listdir
 from .json_utility import update_pkl
 import pywinctl as pwc
-
+import pygetwindow as gw
 import dill as pickle
 import pygame
 import json
@@ -22,23 +22,24 @@ from config import (
 from .utility import (
     click_and_confirm,
     click_on_picture_once,
-    read_pkl,
+    read_pkl
+)
+from .player_method import(
     fuse_brak_popo,
     fgo_brak_bank,
     fgo_and_vide_on_brak_bank,
     fvider_ressource_on_bank,
     fmove_map,
-    ffind_actual_map,
-    fight,
+    ffind_actual_map
 )
-
-logging.basicConfig(level=logging.INFO)
-
-
+from .fight import fight
+class WindowNotFoundException(Exception):
+    pass
 class Player:
     def __init__(
         self, name, PA, PM, sort, lvl, position, classe, metier, hash_name=None
     ):
+        self.window_title = f"{name} - Dofus Retro v{version}"
         self.PA = PA
         self.PM = PM
         self.name = name
@@ -61,7 +62,6 @@ class Player:
         # self.window = self.get_window()
         self.window = None
         self.window_resolution = None
-        self.window_activate = False
         self.last_click_pos = None
         self.color = colors["inventory_empty"]
 
@@ -80,24 +80,23 @@ class Player:
 
         except Exception as e:
             print(e)
-            print(e)
             print("gros pb")
-        self.window_activate = True
+        
 
     def is_window_inactive(self):
-        return self.window is None or not self.window_activate
+        active_window= gw.getActiveWindow()
+        return active_window is None or self.window is None or active_window.title != self.window_title 
 
     def get_window(self):
-        dofus_window_name = f"{self.name} - Dofus Retro v{version}"
         try:
-            self.window = pwc.getWindowsWithTitle(dofus_window_name)[0]
+            self.window = pwc.getWindowsWithTitle(self.window_title)[0]
         except IndexError as e:
             print(e)
-            self.logg_player()
-            self.window = pwc.getWindowsWithTitle(dofus_window_name)[0]
+            raise WindowNotFoundException()
+            
         self.active_player()
         # self.window_resolution = self.window.resolution()
-        # self.window_activate = True
+        # 
         logging.info(f"windows of {self.name} activated")
 
     def logg_player(self):
@@ -297,9 +296,6 @@ class Player:
     def move_map(self, direction):
         return fmove_map(self, direction)
 
-        # check=None
-        # if self.window == None or self.window_activate !=True:
-        #     self.get_window()
 
     def find_actual_map(self):
         return ffind_actual_map(self)
@@ -353,9 +349,6 @@ class Player:
     def deplacement(self, chemin):
         if self.is_window_inactive():
             self.get_window()
-        # print(self.window)
-        # if self.window_activate !=True:
-        #     self.get_window()
         for s in chemin:
             self.move_map(s)
 

@@ -1,7 +1,7 @@
 import json
 import pickle
 from mergedeep import merge
-
+from os import path
 
 def write_json(new_data, filename, object_name):
     file = open(filename, "w+")
@@ -39,6 +39,8 @@ def json2pkl(json_file, output_pkl):
 
 
 def read_pkl(db):
+    if not path.exists(db): 
+        return dict()
     dbo = open(db, "rb")
     try:
         existing_data = pickle.load(dbo)
@@ -50,9 +52,11 @@ def read_pkl(db):
 
 
 def update_pkl(db, data):
-    # Load existing data
-    existing_data = read_pkl(db)
-    # Update existing data with new data
+    existing_data= dict()
+    if path.exists(db):
+        # Load existing data
+        existing_data = read_pkl(db)
+        # Update existing data with new data
     new_data = merge(existing_data, data)
     # Write the updated data back to the pkl file
 

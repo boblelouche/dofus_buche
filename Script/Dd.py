@@ -3,7 +3,7 @@ import pyautogui
 import json
 from config import files, colors, positions
 import keyboard
-from utility import get_pixel_color_on_pos, click_on_picture
+from .utility import get_pixel_color_on_pos, click_on_picture
 
 
 class Mount:

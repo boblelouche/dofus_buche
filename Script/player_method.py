@@ -1,7 +1,8 @@
 import time
 import pyautogui
 from config import positions, files, colors, directories
-from utility import (
+
+from .utility import (
     click_and_confirme_absolute,
     click_on_picture_once,
     click_on_picture,
@@ -18,7 +19,6 @@ import numpy as np
 from pynput.keyboard import Controller
 from os import path, rename
 import logging
-import Script.ocr as viewer
 from config import regions
 import Script.ocr as viewer
 
@@ -285,6 +285,7 @@ def find_map_changer(window):
                     logging.info(f"{name} not found {e}")
                     keyboard.release("a")
                     # print(e)
+
     for name, picture in pictures["on_map"]["move"].items():
         if name.startswith("star"):
             try:
@@ -321,7 +322,6 @@ def fmove_map(Perso, direction):
     # check=None
     if Perso.is_window_inactive():
         Perso.get_window()
-
     direction_dict = {"u": (1, -1), "d": (1, 1), "r": (0, 1), "l": (0, -1)}
     file_data = read_pkl(files["map_position_db"])
     for key in file_data:

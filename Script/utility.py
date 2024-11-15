@@ -10,7 +10,6 @@ import logging
 from .inputs import wait_for_click, wait_for_esc
 from pynput import mouse
 
-pictures = read_pkl(files["pictures_db"])
 
 
 def make_image_hash(image_path):
