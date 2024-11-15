@@ -3,7 +3,7 @@ from Script.Dd import Mount
 # from Personage import Player
 # import pickle
 import dill as pickle
-from .Script.Player import Player
+from Script.Player import Player
 
 
 Iro = Player(

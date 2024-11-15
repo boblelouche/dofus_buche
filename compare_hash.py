@@ -1,5 +1,6 @@
-from Pictures import Picture
-from json_utility import update_pkl, read_pkl, files, directories
+from Script.Pictures import Picture
+from Script.json_utility import update_pkl, read_pkl
+from config import files, directories
 from os import path, listdir
 
 
