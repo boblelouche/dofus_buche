@@ -1,10 +1,8 @@
-from os import path, listdir, chdir
+from os import path, listdir, chdir, getcwd
 import pygetwindow as gw
-# 
 
-# root=r'C:\Users\apeir\Documents\code\dofus'
-root=r'F:\programation\dofus_buche\Script'
-chdir(root)
+
+root = getcwd()
 combat_sound_file = path.join(root,'son','PULSE.mp3')
 harvest_time = 12
 version = '1.44.5'
@@ -30,15 +28,16 @@ directories = {
     "photo": path.join(root,'photo'),
     "resource": path.join(root,'resource'),
     "map_info": path.join(root,'map_info'),
-    "combat": path.join(root,'resource','photo', "combat"),
+    # "combat": path.join(root,'resource','photo', "combat"),
+    "combat": path.join(root,'photo', "combat"),
     "ressource": path.join(root,'photo', "ressource"),
-    "map": path.join(root,'photo', "map"),
-    "zap": path.join(root,'photo', "map", "zap"),
-    "move": path.join(root,'photo', "map", "move"),
-    "map_name": path.join(root,'photo', "map", "name"),
-    "enemys_pictures":path.join(root,'photo',"enemy"),   
+    "map": path.join(root,'photo', "on_map"),
+    "zap": path.join(root,'photo', "on_map", "zap"),
+    "move": path.join(root,'photo', "on_map", "move"),
+    "map_name": path.join(root,'photo', "on_map", "name"),
+    "enemys_pictures":path.join(root,'photo',"combat","enemy")   
 }
-print(directories.keys())
+# print(directories.keys())
 # Define files
 files = {
     # "map_info": path.join(directories["map_info"],'name.json'),
@@ -57,9 +56,14 @@ files = {
     "zapy_div_act": path.join(directories["photo"],'zapy_Divers_activate.png'),
     "zapy_arene": path.join(directories["photo"],'zapy_arene.png'),
     "zapy_bank": path.join(directories["photo"],'zapy_bank.png'),
+    "actual_tour": path.join(directories["combat"],"player_miniature",'actual_tour.png'),
+    "actual_tour2": path.join(directories["combat"],"player_miniature",'actual_tour2.png'),
+    "actual_tour3": path.join(directories["combat"],"player_miniature",'actual_tour3.png'),
+    "connect": path.join(directories["photo"],'Se connecter.png'),
     "db_player": path.join(root,"players.pkl"),
     "map_position": path.join(directories["map_info"],"position.json"),
     "map_position_db": path.join(directories["map_info"],"position.pkl"),
+    "pictures_db": path.join(root,"picture_db.pkl"),
     "xy_cell":path.join(directories["map_info"],"xy_cell.json"),
     "saved_road": path.join(directories["map_info"],'saved_road.json')
     
@@ -104,9 +108,16 @@ regions = {
     "map_name": (450,60,100,60),
     "combat_mini":(290,690,1390,100),
     "chat":(299,800,705,201),
-    "vie":(1000,790,80,80),
-    "sort_zone":(1100,890,470,110),    
+    "vie_centre":(1000,790,80,80),
+    "sort_zone":(1100,890,470,110),
+    "perso_info":(1185,810,300,100),
+    "miniature_name":(1320,810,130,25),    
+    "vie":(1320,810,130,25),
+    "PA":(1320,810,130,25),
+    "PM":(1320,810,130,25),
+    
     "chall_zone":(312,135,75,210),
+
     "fight_zone":(299,19,1299,800)
 }
 
@@ -124,11 +135,11 @@ resource_lists = {
 }
 
 # Define pictures
-list_pictures = {
-    "zap": [path.join(directories["zap"],f) for f in listdir(directories["zap"]) if f.startswith('zap')],
-    "move_arrows": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('arrow')],
-    "move_stars": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('star')],
-    "bucheron_enemys":[path.join(directories["enemys_pictures"],"bucheron",f) for f in listdir(path.join(directories["enemys_pictures"],"bucheron"))]
-}
-# with open(files['db_player'], 'rb') as f:
-#     Iro, Lea, Taz = pickle.load(f)
+# list_pictures = {
+#     "zap": [path.join(directories["zap"],f) for f in listdir(directories["zap"]) if f.startswith('zap')],
+#     "move_arrows": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('arrow')],
+#     "move_stars": [path.join(directories["move"],f) for f in listdir(directories["move"]) if f.startswith('star')],
+#     "bucheron_enemys":[path.join(directories["enemys_pictures"],"bucheron",f) for f in listdir(path.join(directories["enemys_pictures"],"bucheron"))]
+# }
+# # with open(files['db_player'], 'rb') as f:
+# #     Iro, Lea, Taz = pickle.load(f)

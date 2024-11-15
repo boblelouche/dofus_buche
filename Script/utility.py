@@ -9,8 +9,11 @@ from PIL import Image
 from imagehash import phash
 from imagehash import hex_to_hash
 from math import sqrt
-from json_utility import *
+from json_utility import read_pkl, update_pkl
+import json
+import logging
 
+pictures = read_pkl(files["pictures_db"])
 
 def make_image_hash(image_path):
     image = Image.open(image_path)
@@ -37,6 +40,7 @@ def click_and_confirme_absolute(pos):
 # time.sleep(collecte_time[ressource_type])
 
 def detect_click_left():
+    print('waiting for an click is done')
     state_left = win32api.GetKeyState(0x01)  # Left button up = 0 or 1. Button down = -127 or -128
     while True:
         a = win32api.GetKeyState(0x01)
@@ -48,15 +52,15 @@ def detect_click_left():
 
 
 def fget_screenshot_region(Perso, region):
+    if Perso.window == None or Perso.window_activate !=True:
         Perso.get_window()
-        if Perso.window is not None:
-            time.sleep(1)
-            width, height = region[2], region[3]
-            for left in range(0, width, 50):
-                for top in range(0, height, 50):
-                    quad_region = (region[0] + left, region[1] + top, 50, 50)
-                    quad_screenshot = path.join(directories["map_quad"], f'{left}_{top}.png')
-                    pyautogui.screenshot(imageFilename=quad_screenshot, region=quad_region, allScreens=False)
+    # time.sleep(1)
+    width, height = region[2], region[3]
+    for left in range(0, width, 50):
+        for top in range(0, height, 50):
+            quad_region = (region[0] + left, region[1] + top, 50, 50)
+            quad_screenshot = path.join(directories["map_quad"], f'{left}_{top}.png')
+            pyautogui.screenshot(imageFilename=quad_screenshot, region=quad_region, allScreens=False)
 
 
 def detect_escape():
@@ -100,96 +104,18 @@ def save_road(name):
 def get_map_name_picture(Perso):
     # time.sleep(2)
     # screenshot_path = path.join(directories["temp"], f'actual_map.png')
-    Perso.get_window()
-    if Perso.window is not None:
-        screenshot_path = path.join(directories["temp"], f'actual_map_{Perso.name}.png')
-        screenshot = pyautogui.screenshot(region=regions["map_name"])
-        screenshot.save(screenshot_path)
-        return screenshot_path
+    if Perso.window == None or Perso.window_activate !=True:
+        Perso.get_window()
+    screenshot_path = path.join(directories["temp"], f'actual_map_{Perso.name}.png')
+    screenshot = pyautogui.screenshot(region=regions["map_name"])
+    screenshot.save(screenshot_path)
+    return screenshot_path
 
 
-def find_map_changer():
-    screen_width, screen_height = pyautogui.size()
-    region = {
-        "l":(screen_width // 10, 0, screen_width // 7, screen_height-250),
-        "r":(screen_width-500, 0, screen_width-250, screen_height-250),
-        "d":(0, screen_height-400, screen_width, screen_height-250)
-    }
-    u=(0, 0, screen_width, 150)
-    map_changer={"l":(),"r":(),"d":(),"u":()}
-    # print(pyautogui.size())
-    for direction in region:
-        for picture in list_pictures["move_arrows"]:
-            try:
-                keyboard.press("a")
-                time.sleep(2)
-                # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-                image_positions = list(pyautogui.locateAllOnScreen(picture, region=region[direction], confidence=0.8))       
-                # print(image_positions)
-                if not len(image_positions) == 0:
-                    for box in image_positions:
-                        keyboard.release("a")
-                        map_changer[direction]=(int(box.left), int(box.top+75))
-                        break
-                    break
-            except Exception as e :
-                keyboard.release("a")
-                # print(e)   
-    for picture in list_pictures["move_stars"]:
-        try:
-            keyboard.press("a")
-            time.sleep(2)
-            # image_positions = list(pyautogui.locateAllOnScreen(picture, confidence=0.8))
-            image_positions = list(pyautogui.locateAllOnScreen(picture, region=u, confidence=0.7))       
-            # print(image_positions)
-            if not len(image_positions) == 0:
-                for box in image_positions:
-                    keyboard.release("a")
-                    map_changer["u"]=(int(box.left), int(box.top))
-                    break
-                break
-        except Exception as e :
-            keyboard.release("a")
-            continue
-    return map_changer
 
 
-def find_actual_map(Perso):
-    Perso.get_window()
-    if Perso.window is not None:
-        file_data=read_pkl(files["map_position_db"])
-        map_name_picture =  get_map_name_picture(Perso)
-        # time.sleep(1)
-        # print(map_name_picture)
-        actual_hash = make_image_hash(map_name_picture)
-        # print(actual_hash)
-        for key, value in file_data.items():
-            if 'image_hash' in value:
-                if hex_to_hash(value['image_hash']) - actual_hash <= 5:
-                    print(f"Image hash found in key: {key}")
-                return key
-        new_key = str(len(file_data.keys())+1)
-        map_changer = find_map_changer()
-        # print(map_changer)
-        t = { new_key: {
-            # "position" :["x","y"],
-            "position" :f'{Perso.position}',
-            "name":"",
-            "picture_path": path.join(directories["map_name"],f'{new_key}.png'),
-            "image_hash":f'{actual_hash}',
-            "map_changer": map_changer,
-            "ressource": {}}}    
-        file_data.update(t)
-        update_pkl(files["map_position_db"],file_data)
-
-        # rename(map_name_picture, path.join(,f'{key}.png'))
-        try:
-            rename(map_name_picture, path.join(directories["map_name"],f'{new_key}.png'))
-        except:
-            rename(map_name_picture, path.join(directories["map_name"],f'{new_key}bis.png'))
-        return new_key
     
-def confirme_changement_map(timeout=15):
+def confirme_changement_map( timeout=15):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
@@ -244,8 +170,8 @@ def get_map_info(key):
     return pixel
 
 def detect_pixel_change_color_on_x(Perso,region):
-    Perso.get_window()
-    if Perso.window is not None:
+        if Perso.window == None or Perso.window_activate !=True:
+            Perso.get_window()
         time.sleep(1)
         x_change_pos=[]
         screenshot = pyautogui.screenshot(imageFilename=path.join(directories["temp"],'1.png'), region=regions["fight_zone"])
@@ -349,7 +275,4 @@ def calculate_path(actual_position, destination):
                         # time.sleep(1)
         # return "le deplacement n'as pas eu lieu"
         # print("cooldown over")
-# dofus_window = get_window('Laestra')
-# time.sleep(1)
-# click_on_picture(r'C:\Users\apeir\Documents\code\dofus\photo\inventaire_divers_desactivate.png')
-# get_pixel_color_on_click()
+#

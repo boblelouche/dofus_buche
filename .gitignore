@@ -1,4 +1,8 @@
-./temp/*
+photo/
+temp/*
 .venv/*
 __pycache__/
-./LeafMITM/*
+LeafMITM
+*.pkl
+**/*.pkl
+Script/FindObjects.py

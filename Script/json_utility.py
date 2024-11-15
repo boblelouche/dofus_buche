@@ -3,6 +3,8 @@
 import json
 import pickle
 from config import * 
+from mergedeep import merge
+
 
 # t = r'C:\Users\apeir\Documents\code\dofus\map_info\test.json'
 
@@ -27,16 +29,18 @@ def json2pkl(json_file,output_pkl):
     try:
         dbo =  open(output_pkl, 'rb')
         existing_data = pickle.load(dbo)
+        dbo.close()
     except (FileNotFoundError, EOFError):
         existing_data = {}
     # Update the existing data with the new data
-    finally:
-        dbo.close()
+    # finally:
+    #     dbo.close()
     existing_data.update(data)
 
     # Write the updated data to the pkl file
     dbw = open(output_pkl, 'wb')
     pickle.dump(existing_data, dbw)
+    dbw.close()
 
 def read_pkl(db):
   try:
@@ -45,19 +49,19 @@ def read_pkl(db):
     dbo.close()
   except (FileNotFoundError, EOFError):
       existing_data = {}
-  finally:
-     dbo.close()
+  # finally:
+  #    dbo.close()
   return existing_data
 
-def update_pkl(db, new_data):
+def update_pkl(db, data):
     # Load existing data
     existing_data = read_pkl(db)
     # Update existing data with new data
-    existing_data.update(new_data)
+    new_data = merge(existing_data, data)
     # Write the updated data back to the pkl file
     
     dbo = open(db, 'wb')
-    pickle.dump(existing_data, dbo)
+    pickle.dump(new_data, dbo)
     dbo.close()
 
 # js= r'C:\Users\apeir\Documents\code\dofus\map_info\position.json'
@@ -65,5 +69,3 @@ def update_pkl(db, new_data):
 # json2pkl(js,db)
 
 
-
-# print(read_pkl(db)['1']['name'])
