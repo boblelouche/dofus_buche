@@ -5,6 +5,7 @@ import pickle
 from config import * 
 from mergedeep import merge
 
+
 # t = r'C:\Users\apeir\Documents\code\dofus\map_info\test.json'
 
 def write_json(new_data, filename,object_name):

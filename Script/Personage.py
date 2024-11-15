@@ -5,7 +5,7 @@ import keyboard
 from os import path, listdir
 from json_utility import update_pkl
 # from utility import *
-import pickle
+import dill as pickle
 from Dd import Monture
 import pygame
 import json

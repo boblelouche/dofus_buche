@@ -29,7 +29,7 @@ Lea.position=[8,-17]
 # Iro.position=[20,-25]
 # Iro.update_player()
 # print(Iro.position)
-Lea.deplacement("d")
+Lea.deplacement("dlr")
 # Iro.add_ressource_position_on_map("bois")
 # Iro.collecte_on_know_map("bois")
 # Iro.go_brak_bank()

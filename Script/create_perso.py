@@ -1,6 +1,7 @@
 from Dd import Monture
 # from Personage import Player
-import pickle
+# import pickle
+import dill as pickle
 from Personage import *
 
 

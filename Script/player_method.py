@@ -210,7 +210,6 @@ def locate_in_picture(haystack, needle_path):
     needleGray = cv.cvtColor(np.array(needle.astype(np.float32)), cv.COLOR_RGB2GRAY)
     result = cv.matchTemplate(scGray, needleGray, cv.TM_CCOEFF_NORMED)
     minVal, maxVal, minLoc, maxLoc = cv.minMaxLoc(result)
-    # print(minVal, maxVal, minLoc, maxLoc )
     return minLoc
 
 
@@ -218,35 +217,29 @@ def locate_in_picture(haystack, needle_path):
 def fmove_map(Perso, direction):
         # check=None    
     if Perso.window == None or Perso.window_activate !=True:
-        Perso.get_window()
-    
+        Perso.get_window()    
+        
     direction_dict = {"u": (1, -1),"d": (1, 1),"r": (0, 1),"l": (0, -1)}
     file_data=read_pkl(files["map_position_db"])           
-    print(file_data.keys())
     for key in file_data:
         if file_data[key]["position"]==Perso.position:
             logging.info(f"actual position knowed")
             Perso.position = [int(Perso.position[0]),int(Perso.position[1])]
             Perso.actual_map_key=key
             if file_data[Perso.actual_map_key]["map_changer"][direction]==():
-                print(key, Perso.actual_map_key, Perso.position)
+                # print(key, Perso.actual_map_key, Perso.position)
                 find_map_changer(Perso.window)
                 return "direction move not know"    
             else:
                 pos=file_data[Perso.actual_map_key]["map_changer"][direction]
-
                 pyautogui.click((pos[0],pos[1]))
-                # try:
                 check = confirme_changement_map()
-                # except:
-
                 if check == True:
                     logging.info(f"{Perso.name} move to direction : {direction}")
                     time.sleep(0.5)
                     if direction in direction_dict:
                         index, value = direction_dict[direction]
                         Perso.position[index] = Perso.position[index] + value
-                                            
                     Perso.update_player()
                     return
                 else:
@@ -255,11 +248,8 @@ def fmove_map(Perso, direction):
         
     logging.info(f"{Perso.position} not in db")        
     Perso.actual_map_key = ffind_actual_map(Perso)
-    # file_data = read_pkl(files["map_position_db"])
     file_data=read_pkl(files["map_position_db"])           
-    print(file_data.keys(),Perso.actual_map_key, direction)
     pos=file_data[Perso.actual_map_key]["map_changer"][direction]
-    print(pos)
     logging.info(f"{pos} will be clicked")
     pyautogui.click((pos[0],pos[1]))
     check = confirme_changement_map()

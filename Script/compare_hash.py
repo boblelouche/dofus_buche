@@ -3,6 +3,7 @@ from os import path, listdir, walk
 from config import * 
 from Pictures import *
 from json_utility import *
+import pandas as pd
 
 def scan_pictures(root_folder, screen_type):    
     new_pictures = {}
@@ -32,8 +33,12 @@ def make_dict_from_photo_folder(db_file, picture_folder):
 def get_info_from_pictures_db(file):
     return read_pkl(file)
 
-make_dict_from_photo_folder(files['pictures_db'], directories["photo"])
+# make_dict_from_photo_folder(files['pictures_db'], directories["photo"])
 
-print(get_info_from_pictures_db(files["pictures_db"]))
-# t = get_info_from_pictures_db(files["pictures_db"])
-# print(t["screen_type"]["bois"]["inventaire_plein"])
+# print(get_info_from_pictures_db(files["pictures_db"]))
+
+pictures_pickle = r'C:\Users\apeir\Documents\code\dofus\picture_db.pkl'
+db_picture = pd.read_pickle(pictures_pickle)
+
+# print('hellp')
+print(db_picture)
