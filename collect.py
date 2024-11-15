@@ -1,22 +1,19 @@
-from config import *
-# from init import *
-import pyautogui
-import time
+from config import files
 import pickle
 # from Personage import Player
 
 
-db = open(files['db_player'], 'rb')
+db = open(files["db_player"], "rb")
 Iro, Lea, Taz, Ket = pickle.load(db)
 
 db.close()
 
-Lea.position=[8,-17]
+Lea.position = [8, -17]
 # def clean(a)
 # for i in range(1):
 # Iro.get_screenshot_region(regions["windows_dofus"])
 # Iro.get_screenshot_region(regions["vie"])
-            # 
+#
 # Ket.position = [7,-26]
 # Ket.deplacem  ent("u")
 # for _ in range(3):
