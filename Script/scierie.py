@@ -1,14 +1,11 @@
 import pyautogui
 import pygetwindow as gw
-import time 
-import keyboard
-import cv2 as cv
-from os import path, listdir, remove, rename
-import numpy as np
-from ocr import read_img
+import time
 
-window_name ='Ironamo - Dofus Retro v1.44.2'
-divers=[1462,184]
+window_name = "Ironamo - Dofus Retro v1.44.2"
+divers = [1462, 184]
+
+
 def gotobank():
     dofus_window = gw.getWindowsWithTitle(window_name)[0]
     # Load the screenshot and the template image
@@ -35,9 +32,13 @@ def gotobank():
         # pyautogui.click(x=1413,y=263)
         # time.sleep(5)
         # pyautogui.click(x=1342,y=448)
-        pos_bankier = pyautogui.locateOnScreen(r"C:\Users\apeir\Documents\code\dofus\photo\bankier2.png", confidence=0.7)
+        pos_bankier = pyautogui.locateOnScreen(
+            r"C:\Users\apeir\Documents\code\dofus\photo\bankier2.png", confidence=0.7
+        )
         pyautogui.doubleClick(x=pos_bankier.left, y=pos_bankier.top)
-# 
-        # pyautogui.doubleClick(x=po
+
+
+#
+# pyautogui.doubleClick(x=po
 
 gotobank()
