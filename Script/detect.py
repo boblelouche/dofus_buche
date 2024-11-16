@@ -3,7 +3,7 @@ import pygetwindow as gw
 import time
 from os import path, listdir, remove, rename
 from ocr import read_img
-
+from config import files
 import json
 from json_utility import write_json
 
@@ -67,7 +67,7 @@ def check_actual_map():
             new_map_info = {name: {"coord": "", "ressource": []}}
             write_json(
                 new_map_info,
-                r"C:\Users\apeir\Documents\code\dofus\map_info\name.json",
+                files["name.json"],
                 "maps",
             )
             return "the map have been added to db"

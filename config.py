@@ -194,6 +194,9 @@ regions = {
     "PM": (1320, 810, 130, 25),
     "chall_zone": (312, 135, 75, 210),
     "fight_zone": (299, 19, 1299, 800),
+    "mini_map": (950, 835, 160, 160),
+    "center_mini_map": (1030, 915),
+    "ocr_mini_map": (1040, 885, 80, 30),
 }
 
 # Define harvest patterns
@@ -233,3 +236,4 @@ list_pictures = {
 }
 # # with open(files['db_player'], 'rb') as f:
 # #     Iro, Lea, Taz = pickle.load(f)
+#

@@ -7,7 +7,8 @@ from .utility import get_pixel_color_on_pos, click_on_picture
 
 
 class Mount:
-    def __init__(self, pers, Pods, effect, lvl):
+    def __init__(self, name, pers, Pods, effect, lvl):
+        self.name = name
         self.pers = pers
         self.Pods = Pods
         self.effect = effect
