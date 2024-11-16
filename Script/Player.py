@@ -30,7 +30,8 @@ from .player_method import(
     fgo_and_vide_on_brak_bank,
     fvider_ressource_on_bank,
     fmove_map,
-    ffind_actual_map
+    ffind_actual_map,
+    fdetect_pos_on_mini_map
 )
 from .fight import fight
 class WindowNotFoundException(Exception):
@@ -64,7 +65,7 @@ class Player:
         self.window_resolution = None
         self.last_click_pos = None
         self.color = colors["inventory_empty"]
-        self.is_window_inactive = self.is_window_inactiv()
+        # self.is_window_inactive = self.is_window_inactiv()
 
     def active_player(self):
         try:
@@ -84,7 +85,7 @@ class Player:
             print("gros pb")
         
 
-    def is_window_inactiv(self):
+    def is_window_inactive(self):
         active_window= gw.getActiveWindow()
         return active_window is None or self.window is None or active_window.title != self.window_title 
 
@@ -143,7 +144,9 @@ class Player:
         # players.update()
         pickle.dump(players, d)
         d.close()
-
+    def detect_pos_on_mini_map(self):
+        fdetect_pos_on_mini_map(self)
+        
     def go_brak_bank(self):
         fgo_brak_bank(self)
 
