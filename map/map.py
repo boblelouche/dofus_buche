@@ -1,5 +1,5 @@
-
-from map.contants import *
+from config import directories
+from .contants import MAPID_TO_POS, HEX_CHARS
 import yaswfp.swfparser as swfparser
 from map.cell import Cell
 from urllib.parse import unquote
@@ -23,7 +23,8 @@ class Map():
         self.map_date =map_date
         self.decryption_key = decryption_key
         #self.entityself.entity = None
-        MAP_DIR = (PATH+"/data/maps")
+        MAP_DIR = directories["MAP_DIR"]
+        
         self.path = '{}/{}_{}{}.swf'.format(MAP_DIR, mapID, map_date, 'X' if decryption_key else '')
         pos = MAPID_TO_POS[mapID]
         self.x = pos[0]

@@ -1,5 +1,7 @@
-from character.path_finding import *
-import time, random
+# from character.path_finding import *
+from character.path_finding import from_cell_id_to_x_y_pos,heuristic,from_pos_x_y_to_cell_id
+import time
+import random
 class Combat:
 
     def __init__(self, map_frame):
@@ -76,7 +78,7 @@ class Combat:
                 self.map_frame.character.deplacement.deplacement(self.map_frame.character.cell.CellID, good_pos, self.map_frame.character.map.mapswidth, self.map_frame.character.map.carreau, self.map_frame.character.map.binairemap, self.map_frame.character.map.sun, self.map_frame.character.map.resource, pm, True)
 
 
-        self.map_frame.character.socket_to_server.send((f"Gt"+"\n\x00").encode())
+        self.map_frame.character.socket_to_server.send(("Gt"+"\n\x00").encode())
 
         if False:# dist > 8 and dist not in (1.9142135623730951, 1.5):
             if self.map_frame.character.PM:
@@ -110,7 +112,8 @@ class Combat:
 
 
         return
-        path = os.getcwd()+"\\resource\\spells.xml"
+        # path = os.getcwd
+        # ()+"\\resource\\spells.xml"
         for spell in spells_id:
             for spell in tree.xpath("/SPELLS/SPELL"):
                 if spell == spell.get("ID"):

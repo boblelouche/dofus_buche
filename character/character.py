@@ -31,14 +31,10 @@ class Character:
         self.xp_actuelle = data[0].split(",")[0]
         self.xp_depart = data[0].split(",")[1]
         self.xp_fin = data[0].split(",")[2]
-
         self.kamas = data[1]
-
         self.points_sorts = data[2]
-
         self.vie_actuelle = data[5].split(",")[0]
         self.vie_max = data[5].split(",")[1]
-
         self.ennergie_actuelle = data[6].split(",")[0]
         self.ennergie_max = data[6].split(",")[1]
 

@@ -7,13 +7,13 @@ from character.path_finding import (
     from_pos_x_y_to_cell_id,
 )
 from threading import Thread
-import time
+# import time
 
 
 class Deplacement:
     def __init__(self, socket_to_server):
         self.ismouving = False
-        self.socket_to_server = socket_to_server
+        # self.socket_to_server = socket_to_server
 
     def deplacement(
         self,
@@ -69,11 +69,11 @@ class Deplacement:
 
         return (False, 0)
 
-    def wait(self, dofus_path, run_timing, last_cell):
-        print(f"Depacement du personnage vers {last_cell} (temps {run_timing})")
-        packet = "GA001" + dofus_path[0] + "\n\x00"
-        self.socket_to_server.send(packet.encode())
-        time.sleep(run_timing)
-        self.socket_to_server.send(("GKK0" + "\n\x00").encode())
-        self.ismouving = False
-        print("Fin du depacement")
+    # def wait(self, dofus_path, run_timing, last_cell):
+    #     print(f"Depacement du personnage vers {last_cell} (temps {run_timing})")
+    #     packet = "GA001" + dofus_path[0] + "\n\x00"
+    #     self.socket_to_server.send(packet.encode())
+    #     time.sleep(run_timing)
+    #     self.socket_to_server.send(("GKK0" + "\n\x00").encode())
+    #     self.ismouving = False
+    #     print("Fin du depacement")

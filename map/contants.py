@@ -1,16 +1,16 @@
 # source https://github.com/XeLiT
 
-HEX_CHARS = "0123456789ABCDEF"
-ZKARRAY = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-SUN_MAGICS = [1030, 1029, 4088]
-PATH = "D:/Program Files (x86)/Ankama/retro/resources/app/retroclient"
-RED = lambda x: '\033[1;31m{}\033[0m'.format(x)
-YELLOW = lambda x: '\033[0;33m{}\033[0m'.format(x)
-DIM = lambda x: '{}'.format(x)
+# PATH = "D:/Program Files (x86)/Ankama/retro/resources/app/retroclient"
 
 
+def RED(x):
+    return '\033[1;31m{}\033[0m'.format(x)
 
+def YELLOW(x):
+    return '\033[0;33m{}\033[0m'.format(x)
 
+def DIM(x):
+    return '{}'.format(x)
 
 MAPID_TO_POS = {
   "8453": [26, -35],
