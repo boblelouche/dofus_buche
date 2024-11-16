@@ -12,7 +12,7 @@ def set_config():
     global config
     # config = '-c tessedit_char_whitelist=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZéèêç(),- --psm 6'
     # config = '-c tessedit_char_whitelist=0123456789abc-:defghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZéèêç( ), --psm 6'
-    config = "-c tessedit_char_whitelist=0123456789 --psm 6"
+    config = "-c tessedit_char_whitelist=01-,23456789 --psm 6"
 
 
 set_config()
@@ -83,6 +83,7 @@ def read_info_from_actual_turn(picture_path):
     # Read image from which text needs to be extracted
 
     output_file = picture_path.replace(path.splitext(picture_path)[1], ".txt")
+    print(output_file)
     # Read image from which text needs to be extracted
     img = cv2.imread(picture_path)
     # Preprocessing the image starts

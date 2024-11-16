@@ -11,27 +11,59 @@ import Script.ocr as viewer
 from config import files, regions, directories
 from Script.inputs import wait_for_esc, wait_for_click
 import Script.ocr as viewer
-
-
+import pandas as pd
+import ast
 
 from Script.utility import (
     make_image_hash,
-    
     get_map_name_picture,
     read_pkl,
 )
+class Dict2Obj(object):
+    def __init__(self, dictionary):
+        for key in dictionary:
+            setattr(self, key, dictionary[key])
+    
+    def __repr__(self):
+        return "<dict2obj: %s>" % self.__dict__
 
-db = open(files["db_player"], "rb")
-Iro, Lea, Taz, Ket = pickle.load(db)
-db.close()
-print(Iro.hash_name)
+# def myfun(d):
+#   for k, v in d.iteritems():
+#     if isinstance(v, dict):
+#       d[k] = myfun(v)
+#     else:
+#       d[k] = f(v)
+#   return d     
+# df_monture = pd.read_csv(files["db_monture_csv"], sep=',',  encoding='utf-8')
+df_player = pd.read_csv(files["db_player_csv"], sep=',',  encoding='utf-8')
+# db = open(files["db_player"], "rb")
+# db = pd.read_csv()
+# Iro, Lea, Taz, Ket = pickle.load(db)
+# Iro = df_player[player.name]["__dict__"]["PA"]
 
+# for player in range(len(df_player.columns)):
+    # print(ast.literal_eval(df_player[player+1]) )
+team = {}
+# for perso in range(team) :
 
+#     ast.literal_eval(team[perso][4])
+for player in df_player.columns[1:]:
+    # team[player] = ast.literal_eval(df_player[pla xxxxxyer][4]).
+    # team.append(ast.literal_eval(df_player[player][4]))
+    # print(ast.literal_eval(df_player[player][4]))
+    # team.append(Dict2Obj(ast.literal_eval(df_player[player][4])))
+    team[player] = Dict2Obj(ast.literal_eval(df_player[player][4]))
+# Lea = team["Laestra"]
+# print(team["Ironamo"].lvl)
+# print(team["Ironamo"]["position"])
+# print(df_player["Ironamo"].items())
+# print(df_player[df_player["Ironamo"]])
+# print(df_player["Ironamo"][0:5])
 #
 class Groupe:
     def __init__(self, Leader, followers):
         self.Leader = Leader
-        self.followers = followers
+        # self.followers = followers
         self.ended = False
         self.in_fight = False
         self.combat = False
@@ -288,11 +320,11 @@ def follow(Groupe):
 # routine(Iro, [Lea])
 # print(Perso.window)
 # add_info_to_db()
-
-allStar = Groupe(Iro, [Lea])
+print(team['Ironamo'].name)
+# allStar = Groupe(team['Ironamo'],[team['Laestra']])
 # allStar = Groupe(Iro, Lea)
 # allStar.gfollow()
-allStar.detect_pos_on_mini_map()
-print(Iro.position)
+# allStar.detect_pos_on_mini_map()
+# print(Iro.position)
 # allStar.gcombat()
 # allStar.detect_actual_character()

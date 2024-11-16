@@ -25,10 +25,10 @@ Iro.position = [10,-16]
 # Iro.position=[20,-25]
 # Iro.update_player()
 # print(Iro.position)
-# try:
-Iro.deplacement("l")
-# except WindowNotFoundException as e:
-    # print(e)
+try:
+    Iro.deplacement("l")
+except WindowNotFoundException as e:
+    print(e)
 
 # Iro.add_ressource_position_on_map("bois")
 # Iro.collecte_on_know_map("bois")

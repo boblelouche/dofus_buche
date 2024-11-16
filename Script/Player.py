@@ -64,6 +64,7 @@ class Player:
         self.window_resolution = None
         self.last_click_pos = None
         self.color = colors["inventory_empty"]
+        self.is_window_inactive = self.is_window_inactiv()
 
     def active_player(self):
         try:
@@ -83,7 +84,7 @@ class Player:
             print("gros pb")
         
 
-    def is_window_inactive(self):
+    def is_window_inactiv(self):
         active_window= gw.getActiveWindow()
         return active_window is None or self.window is None or active_window.title != self.window_title 
 
