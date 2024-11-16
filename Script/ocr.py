@@ -83,7 +83,7 @@ def read_info_from_actual_turn(picture_path):
     # Read image from which text needs to be extracted
 
     output_file = picture_path.replace(path.splitext(picture_path)[1], ".txt")
-    print(output_file)
+    # print(output_file)
     # Read image from which text needs to be extracted
     img = cv2.imread(picture_path)
     # Preprocessing the image starts
