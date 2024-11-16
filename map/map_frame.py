@@ -1,8 +1,8 @@
-import time, threading
+import time
+import threading
 from entity.entity import Entity
-from resource.hash import get_Cell_Id_From_Hash
 from map.entity_gestion import EntityGestion
-
+from config import carac_array
 
 class MapFrame:
     def __init__(self, interface, character=None):
@@ -27,7 +27,8 @@ class MapFrame:
                         if "," not in infos[5]
                         else int(infos[5].split(",")[0])
                     )
-                except:
+                except Exception as e:
+                    print(e)
                     continue
 
                 entity_id = int(infos[3])
@@ -117,6 +118,22 @@ class MapFrame:
 
                 self.entity_gestion.update_entity(entity_id, None)
 
+    def get_Cell_Id_From_Hash(self,cell_code):
+        char1 = cell_code[0]
+        char2 = cell_code[1]
+        code1 = 0
+        code2 = 0
+        a = 0
+        while (a < len(carac_array)):
+            if (carac_array[a] == char1):
+                code1 = (a * 64)
+            if (carac_array[a] == char2):
+                code2 = a
+            a += 1
+        print((code1 + code2))
+        return (code1 + code2)
+    
+    
     def update_entity(self, packet):
         if packet[:4] == "GA;0" or packet[:3] == "GAS" or packet[:3] == "GAF":
             return
@@ -125,7 +142,7 @@ class MapFrame:
         entity_id = int(data[2])
         # Travel on the map
         if action_id == 1:
-            end_cell = get_Cell_Id_From_Hash(data[3][len(data[3]) - 2 :])
+            end_cell = self.get_Cell_Id_From_Hash(data[3][len(data[3]) - 2 :])
             if entity_id == int(self.character.id_):
                 pass
             self.entity_gestion.update_entity(entity_id, end_cell)
@@ -133,7 +150,7 @@ class MapFrame:
         elif action_id == 501:
             harvest_time = int(data[3].split(",")[1]) / 1000
             cell_id = data[3].split(",")[0]
-            type_of_harvest = data[0]
+            # type_of_harvest = data[0]
             if entity_id == int(self.character.id_):
                 threading.Thread(
                     None, self.is_having, args=(harvest_time, cell_id)
@@ -189,3 +206,4 @@ class MapFrame:
             cells_id.append(cell_id)
 
         return cells_id
+    

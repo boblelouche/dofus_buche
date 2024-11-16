@@ -1,9 +1,9 @@
-from map.contants import *
+from config import constants
 
 
 
 def unhash_cell(raw_cell):
-    return [ZKARRAY.index(i) for i in raw_cell]
+    return [constants["ZKARRAY"].index(i) for i in raw_cell]
 
 
 class Cell:
@@ -25,7 +25,7 @@ class Cell:
         self.layerGroundNum = (cd[0] & 24 << 6) + (cd[2] & 7 << 6) + cd[3]
         self.layerObject1Num = ((cd[0] & 4) << 11) + ((cd[4] & 1) << 12) + (cd[5] << 6) + cd[6]
         self.layerObject2Num = ((cd[0]&2)<<12) + ((cd[7]&1)<<12) + (cd[8]<<6) + cd[9]
-        self.isSun = self.layerObject1Num in SUN_MAGICS or self.layerObject2Num in SUN_MAGICS
+        self.isSun = self.layerObject1Num in constants["SUN_MAGICS"] or self.layerObject2Num in constants["SUN_MAGICS"]
         self.text = str(self.movement)
         self.set_default_color()
 
@@ -49,7 +49,7 @@ class Cell:
 
     def set_entity(self, entity, action):
         if action:
-            if entity.isMainCharacter == True:
+            if entity.isMainCharacte:
                 self.color = 'blue'
                 self.text = entity.type[0]
                 self.entity.append(entity)

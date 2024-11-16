@@ -1,5 +1,9 @@
-
-from character.path_finding import *
+from config import files
+from character.path_finding import (
+    from_pos_x_y_to_cell_id,
+    from_cell_id_to_x_y_pos,
+    heuristic
+    )
 
 
 
@@ -43,7 +47,7 @@ def get_close_cell(map, cell, bad_cell):
 
       
 def get_id(id):
-    with open("D:/Users/cremi/Desktop/Leaf/resource/Recolte.txt", "r") as f:
+    with open(files["recolte"]) as f:
         contenu = f.read()
     for ligne in contenu.split():
         ligne = ligne.split("|")
