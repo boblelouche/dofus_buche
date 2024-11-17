@@ -66,6 +66,7 @@ files = {
     "db_monture_csv": path.join(root, "montures.csv"),
     "map_position_db": path.join(directories["map_info"], "position.pkl"),
     "map_position_new_db": path.join(directories["map_info"], "position.json"),
+    "map_position": path.join(directories["map_info"], "position.pkl"),
     "pictures_db": path.join(root, "picture_db.pkl"),
     "xy_cell": path.join(directories["map_info"], "xy_cell.json"),
     "saved_road": path.join(directories["map_info"], "saved_road.json"),

@@ -1,7 +1,7 @@
 import time
 import pyautogui
 from config import positions, files, colors, directories
-
+import pandas as pd
 from .utility import (
     click_and_confirme_absolute,
     click_on_picture_once,
@@ -439,7 +439,9 @@ def fmove_map(Perso, direction):
     if Perso.is_window_inactive():
         Perso.foreground()
     direction_dict = {"u": (1, -1), "d": (1, 1), "r": (0, 1), "l": (0, -1)}
+    file_data = {}
     file_data = read_pkl(files["map_position_db"])
+    # df = pd.read_csv(files["db_map"], sep=';',  encoding='utf-8', index_col=0)
     for key in file_data:
         if file_data[key]["position"] == Perso.position:
             logging.info("actual position knowed")
@@ -468,7 +470,7 @@ def fmove_map(Perso, direction):
                     return
 
     logging.info(f"{Perso.position} not in db")
-    Perso.actual_map_key = ffind_actual_map(Perso)
+    # Perso.actual_map_key = ffind_actual_map(Perso)
     file_data = read_pkl(files["map_position_db"])
     pos = file_data[Perso.actual_map_key]["map_changer"][direction]
     logging.info(f"{pos} will be clicked")
