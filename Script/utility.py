@@ -9,7 +9,12 @@ import json
 import logging
 from .inputs import wait_for_click, wait_for_esc
 from pynput import mouse
-
+from mss import mss
+import pytesseract
+import cv2
+import numpy as np
+from .window import Window
+import Script.ocr as viewer
 
 
 def make_image_hash(image_path):
@@ -47,16 +52,18 @@ def detect_click_left():
 
 def fget_screenshot_region(Perso, region):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     # time.sleep(1)
     width, height = region[2], region[3]
     for left in range(0, width, 50):
         for top in range(0, height, 50):
-            quad_region = (region[0] + left, region[1] + top, 50, 50)
             quad_screenshot = path.join(directories["map_quad"], f"{left}_{top}.png")
-            pyautogui.screenshot(
-                imageFilename=quad_screenshot, region=quad_region, allScreens=False
+            mss().save(
+                mon=(region[0] + left, region[1] + top, 50, 50), output=quad_screenshot
             )
+            # pyautogui.screenshot(
+            #     imageFilename=quad_screenshot, region=quad_region, allScreens=False
+            # )
 
 
 def save_road(name: str):
@@ -90,26 +97,40 @@ def get_map_name_picture(Perso):
     # time.sleep(2)
     # screenshot_path = path.join(directories["temp"], f'actual_map.png')
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     screenshot_path = path.join(directories["temp"], f"actual_map_{Perso.name}.png")
     screenshot = pyautogui.screenshot(region=regions["map_name"])
     screenshot.save(screenshot_path)
     return screenshot_path
 
 
-def confirme_changement_map(timeout=15):
+def confirm_map_change(window: Window, timeout: int = 6):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
-            location = pyautogui.locateOnScreen(
-                files["map_loading_picture"], confidence=0.8
+            viewer
+            (left, top, width, height) = window.get_game_bounds()
+            screenshot_path = path.join(directories["temp"], "search_load.png")
+            # mss().save(output=screenpath)
+            screenshot = pyautogui.screenshot(
+                screenshot_path,
+                region=(left, top, 500, 150),
+            )
+            screenshot.save(screenshot_path)
+            img = cv2.imread(screenshot_path)
+            # img = np.array(img.astype(np.float32))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            d = pytesseract.image_to_data(img, output_type=pytesseract.Output.DICT)
+            print(d)
+            location = pyautogui.locate(
+                files["map_loading_picture"], screenshot_path, confidence=0.8
             )
             if location:
                 return True
         except Exception as e:
-            print(e)
-            continue
-        time.sleep(0.1)
+            print("Map change not found", e)
+
+        time.sleep(1)
     return False
 
 
@@ -157,7 +178,7 @@ def get_pixel_color_on_pos(pos):
 
 def detect_pixel_change_color_on_x(Perso, region):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     time.sleep(1)
     x_change_pos = []
     screenshot = pyautogui.screenshot(

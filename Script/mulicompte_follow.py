@@ -1,5 +1,6 @@
 import pyautogui
 import time
+from .Player import Player
 
 
 def lastClick():
@@ -16,8 +17,8 @@ def lastClick():
         time.sleep(0.1)
 
 
-def follow(leader, follower):
-    dofus_window_leader = leader.get_window()
+def follow(leader: Player, follower: list[Player]):
+    dofus_window_leader = leader.foreground()
     if dofus_window_leader is not None:
         while True:
             pos = lastClick()

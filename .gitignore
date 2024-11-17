@@ -11,3 +11,4 @@ son/*
 map_info/maps/*
 DATA/*
 .env
+.DS_Store

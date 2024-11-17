@@ -7,6 +7,7 @@ from os import path, listdir
 import json
 from config import directories, regions
 from utility import detect_click_left
+from Player import Player
 
 
 def make_image_hash(image_path):
@@ -19,8 +20,8 @@ def make_image_hash(image_path):
 # windows=(300,800,1000,50)
 
 
-def fget_screenshot_region_quad(Perso, region, long):
-    Perso.get_window()
+def fget_screenshot_region_quad(Perso: Player, region, long):
+    Perso.foreground()
     if Perso.window is not None:
         width, height = region[2], region[3]
         for left in range(0, width, long):
@@ -41,7 +42,7 @@ def fget_screenshot_region_quad(Perso, region, long):
 
 
 def fget_screenshot_region(Perso, region):
-    # Perso.get_window()
+    # Perso.foreground()
     # time.sleep(1)
     # if Perso.window is not None:
     # screenshot_path = path.join(directories["temp"], f'{region[0]}_{region[1]}_{region[2]}_{region[3]}.png')
@@ -55,7 +56,7 @@ def fget_screenshot_region(Perso, region):
 
 
 def test_screenshot_region(Perso):
-    Perso.get_window()
+    Perso.foreground()
     time.sleep(1)
     if Perso.window is not None:
         for file in listdir(directories["temp"]):

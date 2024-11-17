@@ -6,7 +6,6 @@ harvest_time = 12
 version = "1.44.5"
 temps_enemy = 8
 
-
 DEPLACEMENT_TIMING_RUN = {"horizontal": 0.3, "vertical": 0.2, "diagonal": 0.2}
 DEPLACEMENT_TIMING_WALK = {"horizontal": 0.75, "vertical": 0.5, "diagonal": 0.5}
 

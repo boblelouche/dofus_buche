@@ -17,7 +17,7 @@ class Mount:
         self.inventory_open = 0
 
     def open_inventory(self):
-        self.pers.get_window()
+        self.pers.foreground()
         if self.pers.window is not None:
             keyboard.press_and_release("escape")
             time.sleep(0.5)
@@ -33,7 +33,7 @@ class Mount:
             time.sleep(0.5)
 
     def remplir_dd(self):
-        self.pers.get_window()
+        self.pers.foreground()
         if self.pers.window is not None:
             if not self.inventory_open == 1:
                 self.open_inventory()
@@ -47,7 +47,7 @@ class Mount:
 
     def vider_ressource_on_dd(self):
         # print(first_ressource_empty, second_ressource_empty )
-        self.pers.get_window()
+        self.pers.foreground()
         if self.pers.window is not None:
             if not self.inventory_open == 1:
                 self.open_inventory()
@@ -101,7 +101,7 @@ class Mount:
             return "all done"
 
     def prendre_ressource_on_dd(self):
-        self.pers.get_window()
+        self.pers.foreground()
         if self.pers.window is not None:
             if not self.inventory_open == 1:
                 self.open_inventory()
@@ -168,7 +168,7 @@ class Mount:
             return "all done"
 
     def check_if_dd_is_full(self):
-        self.pers.get_window()
+        self.pers.foreground()
         if self.pers.window is not None:
             if not self.inventory_open == 1:
                 self.open_inventory()

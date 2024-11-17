@@ -14,7 +14,7 @@ def detect_play_turn():
 
 
 def play_turn(Perso, zone):
-    Perso.get_window()
+    Perso.foreground()
     if Perso.window is not None:
         for enemy in list_pictures[f"{zone}_enemys"]:
             # print(path.join(picture_bois_enemy_folder, enemy))
@@ -36,7 +36,7 @@ def first_turn(Perso):
 
 
 def detect_end_combat(Perso):
-    Perso.get_window()
+    Perso.foreground()
     if Perso.window is not None:
         try:
             image_find = pyautogui.locateAllOnScreen(
@@ -67,7 +67,7 @@ def fight(Perso):
 
 
 def detect_enemy(Perso):
-    Perso.get_window()
+    Perso.foreground()
     if Perso.window is not None:
         return []
 

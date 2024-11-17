@@ -17,7 +17,7 @@ with open(files["db_player"], "rb") as f:
 #     cell_pos={}
 
 
-#     # Iro.get_window()
+#     # Iro.foreground()
 #     for i in range(3):
 #         for j in range(3):
 #             cell_pos[f'[{i},{j}]']=get_pixel_color_on_click()
@@ -27,7 +27,7 @@ with open(files["db_player"], "rb") as f:
 # write_json(cell_pos,files["xy_cell"],"r")
 def make_mark():
     cell_pos = {}
-    # Iro.get_window()
+    # Iro.foreground()
     for i in range(20):
         for j in range(20):
             if j % 2 == 0:
@@ -41,7 +41,7 @@ def make_mark():
 
 
 def go_on_cell(cell):
-    Iro.get_window()
+    Iro.foreground()
     with open(files["xy_cell"], "r") as file:
         data = json.load(file)
     pyautogui.moveTo((data[cell][0], data[cell][1]))
@@ -79,7 +79,7 @@ height = 10  # Hauteur de chaque case en pixels (non utilisé ici)
 # Créer le dictionnaire des positions
 # def verifiy_cell(Perso, cell):
 def verifiy_cell(Perso):
-    Perso.get_window()
+    Perso.foreground()
     # positions = create_rotated_grid_positions(rows, cols, width, height)
     # print(positions)
 
@@ -90,7 +90,7 @@ def verifiy_cell(Perso):
 
 def look_war_zone(Perso):
     interval = 0.5
-    Perso.get_window()
+    Perso.foreground()
 
     region = regions["fight_zone"]
     for y in range(region[1], int((region[1] + region[3])), 47):

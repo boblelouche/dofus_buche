@@ -11,7 +11,7 @@ from .utility import (
     make_image_hash,
     read_pkl,
     update_pkl,
-    confirme_changement_map,
+    confirm_map_change,
 )
 from imagehash import hex_to_hash
 import cv2 as cv
@@ -20,8 +20,9 @@ from pynput.keyboard import Controller
 from os import path, rename
 import logging
 from config import regions
+from .window import Window
 import Script.ocr as viewer
-
+import sys
 
 keyboard = Controller()
 pictures = read_pkl(files["pictures_db"])
@@ -94,7 +95,7 @@ def fgo_and_vide_on_brak_bank(Perso):
 
 def fgo_brak_bank(Perso):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     Perso.use_brak_popo()
     time.sleep(3)
     # print(positions_brak_zapi_milice)
@@ -123,7 +124,7 @@ def fgo_brak_bank(Perso):
 
 def fvider_ressource_on_bank(Perso):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     # click_on_picture(path.join(pict_folder,"inventaire_ressource_desactivate.png"),region=region_inventory)
     try:
         click_on_picture(files["inventaire_ressource_desactivate.png"])
@@ -172,7 +173,7 @@ def fcheck_map_changer(Perso):
 
 def fuse_brak_popo(Perso):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     Perso.detect_inventory_open()
     if Perso.inventory_open != 1:
         keyboard.press_and_release("i")
@@ -194,7 +195,7 @@ def fuse_brak_popo(Perso):
 
 def ffind_actual_map(Perso):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     map_name_picture = get_map_name_picture(Perso)
     # time.sleep(1)
     # print(map_name_picture)
@@ -232,54 +233,113 @@ def ffind_actual_map(Perso):
     return new_key
 
 
-def find_map_changer(window):
-    # Perso.get_window()
+def find_map_changer(window: Window):
+    # Perso.foreground()
     # if Perso.window is not None:
-    left = window.left + 300
-    top = window.top + 35
-    width = window.width - 600
-    height = window.height - 45
+    (left, top, width, height) = window.get_game_bounds()
+    if sys.platform != "darwin":
+        top = top + 35
+        height = height - 35
+
     region = {
         "l": (0, 0, width // 10, height),
         "r": (width - width // 10, 0, width // 10, height),
-        "d": (0, height - height // 10 - 210, width, height // 10),
+        "d": (0, height - height // 10 - window.chat_bar_height, width, height // 10),
     }
+    region_u = (left, top, width, height // 10)
+    print(region)
 
-    u = (left, top, width, height // 10)
+    #     2056 1291
+    # 1721 1291
+    # 1196 73 860 1246
+    # 1196
+    # {'l': (0, 0, 86, 1246), 'r': (774, 0, 86, 1246), 'd': (0, 912, 860, 124)}
     map_changer = {"l": (), "r": (), "d": (), "u": ()}
     keyboard.press("a")
-    time.sleep(2)
-    screenshot_path = path.join(directories["temp"], "window screenshot.png")
-    pyautogui.screenshot(screenshot_path, region=(left, top, width, height))
     keyboard.release("a")
-    haystack = cv.imread(screenshot_path)
-    screenshotl = haystack[0 : 0 + height - 210, 0 : 0 + width // 10]
-    screenshotd = haystack[
-        0 + height - height // 10 - 210 : 0 + height - 210, 0 : 0 + width
-    ]
-    screenshotr = haystack[0 : 0 + height - 210, 0 + width - width // 10 : 0 + width]
-    screenshot_region = {"l": screenshotl, "r": screenshotr, "d": screenshotd}
+    time.sleep(2)
+    screenshot_path = path.join(directories["temp"], "window_screenshot.png")
+    print(screenshot_path)
+    print(
+        top,
+        left,
+        width,
+        height,
+        window.chat_bar_height,
+        window.margin_width,
+        window.play_box_height,
+        window.play_box_width,
+    )
 
+    map_width = window.chat_bar_height - 130
+    screenshot = pyautogui.screenshot(
+        path.join(directories["temp"], "minimap.png"),
+        region=(
+            left + width // 2 + window.margin_width - map_width // 2 - 130,
+            top + height - window.chat_bar_height + 65,
+            map_width,
+            map_width,
+        ),
+    )
+    screenshot.save(path.join(directories["temp"], "minimap.png"))
+
+    screenshot = pyautogui.screenshot(
+        screenshot_path, region=(left, top, width, height)
+    )
+    screenshot.save(screenshot_path)
+    # screenshot = mss().grab(
+    #     {"left": left, "top": top, "width": width, "height": height}
+    # )
+    print(screenshot)
+    # screenshot_image = Image.frombytes("RGB", screenshot.size, screenshot.rgb)
+    # screenshot_image.save(screenshot_path)
+    haystack = cv.imread(screenshot_path)
+    screenshotl = haystack[0 : 0 + height - window.chat_bar_height, 0 : 0 + width // 10]
+    screenshotd = haystack[
+        0 + height - height // 10 - window.chat_bar_height : 0
+        + height
+        - window.chat_bar_height,
+        0 : 0 + width,
+    ]
+    screenshotr = haystack[
+        0 : 0 + height - window.chat_bar_height, 0 + width - width // 10 : 0 + width
+    ]
+    screenshot_region = {"l": screenshotl, "r": screenshotr, "d": screenshotd}
+    cv.imwrite(path.join(directories["temp"], "screenshotl.png"), screenshotl)
+    cv.imwrite(path.join(directories["temp"], "screenshotd.png"), screenshotd)
+    cv.imwrite(path.join(directories["temp"], "screenshotr.png"), screenshotr)
     for direction in region:
         for name, picture in pictures["on_map"]["move"].items():
             if name.startswith("arrow"):
                 try:
-                    (min_x, min_y) = locate_in_picture(
-                        screenshot_region[direction], picture.path
-                    )
-                    (image_left, image_top) = (
-                        region[direction][0] + min_x + left + 15,
-                        region[direction][1] + min_y + top + 40,
-                    )
-                    logging.debug(f"arrow {direction}", image_left, image_top)
-                    map_changer[direction] = (int(image_left), int(image_top))
-                    pyautogui.screenshot(
-                        path.join(
-                            directories["temp"],
-                            f"{image_left}_{image_top}_screenshot.png",
-                        ),
-                        region=(int(image_left) - 50, int(image_top) - 50, 150, 150),
-                    )
+                    res = locate_in_picture(screenshot_region[direction], picture.path)
+                    i = 0
+                    for minVal, maxVal, (min_x, min_y), maxLoc in res:
+                        (image_left, image_top) = (
+                            region[direction][0] + min_x + left + 15,
+                            region[direction][1] + min_y + top + 60,
+                        )
+                        logging.debug(f"arrow {direction} {image_left} {image_top}")
+                        map_changer[direction] = (int(image_left), int(image_top))
+                        s = pyautogui.screenshot(
+                            path.join(
+                                directories["temp"],
+                                f"{direction}_{i}_{image_left}_{image_top}_screenshot.png",
+                            ),
+                            region=(
+                                int(image_left) - 50,
+                                int(image_top) - 50,
+                                150,
+                                150,
+                            ),
+                        )
+                        s.save(
+                            path.join(
+                                directories["temp"],
+                                f"{direction}_{i}_{image_left}_{image_top}_screenshot.png",
+                            )
+                        )
+                        i += 1
                     break
                 except Exception as e:
                     logging.info(f"{name} not found {e}")
@@ -289,18 +349,61 @@ def find_map_changer(window):
     for name, picture in pictures["on_map"]["move"].items():
         if name.startswith("star"):
             try:
-                image = pyautogui.locate(
-                    picture.path, screenshot_path, region=u, confidence=0.7
+                screenshotu = haystack[0 : 0 + height // 10, 0:width]
+                cv.imwrite(
+                    path.join(directories["temp"], "screenshotu.png"), screenshotu
                 )
-                (image_left, image_top) = (image.left, image.top)
-                # print(image_positions)
-                map_changer["u"] = (int(image_left + left), int(image_top + top))
-                pyautogui.screenshot(
-                    path.join(
-                        directories["temp"], f"{image_left}_{image_top}_screenshot.png"
-                    ),
-                    region=(int(image_left) - 50, int(image_top) - 50, 150, 150),
-                )
+
+                # (minVal, maxVal, minLoc, (min_x, min_y)) = locate_in_picture(
+                #     screenshotu, picture.path
+                # )
+                # print("up", map_changer)
+                # (image_left, image_top) = (
+                #     region["u"][0] + min_x + left + 15,
+                #     region["u"][1] + min_y + top + 10,
+                # )
+                # logging.debug(f"star up {image_left} {image_top}")
+                # map_changer["u"] = (int(image_left), int(image_top))
+
+                # s = pyautogui.screenshot(
+                #     path.join(
+                #         directories["temp"],
+                #         f"{image_left}_{image_top}_screenshot.png",
+                #     ),
+                #     region=(int(image_left) - 50, int(image_top) - 50, 150, 150),
+                # )
+                # s.save(
+                #     path.join(
+                #         directories["temp"],
+                #         f"{image_left}_{image_top}_screenshot.png",
+                #     )
+                # )
+
+                res = locate_in_picture(screenshotu, picture.path)
+                i = 0
+                for minVal, maxVal, minLoc, (min_x, min_y) in res:
+                    print(f"Up method {i}")
+                    (image_left, image_top) = (
+                        region_u[0] + min_x + left + 15,
+                        region_u[1] + min_y + top + 10,
+                    )
+                    logging.debug(f"star up {image_left} {image_top}")
+                    map_changer["u"] = (int(image_left), int(image_top))
+
+                    s = pyautogui.screenshot(
+                        path.join(
+                            directories["temp"],
+                            f"u_{i}_{image_left}_{image_top}_screenshot.png",
+                        ),
+                        region=(int(image_left) - 50, int(image_top) - 50, 150, 150),
+                    )
+                    s.save(
+                        path.join(
+                            directories["temp"],
+                            f"u_{i}_{image_left}_{image_top}_screenshot.png",
+                        )
+                    )
+                    i += 1
                 break
             except Exception as e:
                 print(e)
@@ -310,18 +413,31 @@ def find_map_changer(window):
 
 
 def locate_in_picture(haystack, needle_path):
-    needle = cv.imread(needle_path)
-    scGray = cv.cvtColor(np.array(haystack.astype(np.float32)), cv.COLOR_RGB2GRAY)
-    needleGray = cv.cvtColor(np.array(needle.astype(np.float32)), cv.COLOR_RGB2GRAY)
-    result = cv.matchTemplate(scGray, needleGray, cv.TM_CCOEFF_NORMED)
-    minVal, maxVal, minLoc, maxLoc = cv.minMaxLoc(result)
-    return minLoc
+    locate_method = [
+        cv.TM_SQDIFF,
+        cv.TM_SQDIFF_NORMED,
+        cv.TM_CCORR,
+        cv.TM_CCORR_NORMED,
+        cv.TM_CCOEFF,
+        cv.TM_CCOEFF_NORMED,
+    ]
+    res = []
+    minLoc = (None, None)
+    for method in locate_method:
+        needle = cv.imread(needle_path)
+        scGray = cv.cvtColor(np.array(haystack.astype(np.float32)), cv.COLOR_RGB2GRAY)
+        needleGray = cv.cvtColor(np.array(needle.astype(np.float32)), cv.COLOR_RGB2GRAY)
+        result = cv.matchTemplate(scGray, needleGray, method)
+        minVal, maxVal, minLoc, maxLoc = cv.minMaxLoc(result)
+        print("method", method, minVal, maxVal, minLoc, maxLoc)
+        res.append((minVal, maxVal, minLoc, maxLoc))
+    return res
 
 
 def fmove_map(Perso, direction):
     # check=None
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     direction_dict = {"u": (1, -1), "d": (1, 1), "r": (0, 1), "l": (0, -1)}
     file_data = read_pkl(files["map_position_db"])
     for key in file_data:
@@ -337,7 +453,7 @@ def fmove_map(Perso, direction):
                 pos = file_data[Perso.actual_map_key]["map_changer"][direction]
                 pyautogui.click((pos[0], pos[1]))
 
-                if confirme_changement_map():
+                if confirm_map_change(Perso.window):
                     logging.info(f"{Perso.name} move to direction : {direction}")
                     time.sleep(0.5)
                     if direction in direction_dict:
@@ -358,7 +474,7 @@ def fmove_map(Perso, direction):
     logging.info(f"{pos} will be clicked")
     pyautogui.click((pos[0], pos[1]))
 
-    if confirme_changement_map():
+    if confirm_map_change(Perso.window):
         logging.info(f"db_updated {Perso.name} move to direction : {direction}")
         time.sleep(0.5)
         if direction in direction_dict:
