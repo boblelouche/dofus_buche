@@ -3,6 +3,61 @@ from utility import *
 import json
 import cv2 as cv
 import numpy as np
+from pynput.keyboard import Controller
+from os import path, rename
+import logging
+import Script.ocr as viewer
+from config import regions
+import Script.ocr as viewer
+
+
+ 
+keyboard = Controller()
+pictures = read_pkl(files["pictures_db"])
+
+def fdetect_pos_on_mini_map(self):
+        if self.is_window_inactive():
+            self.get_window()
+        time.sleep(1)
+        # mini_map_screenshot = path.join(directories["temp"], f"{self.name}_mini_map.png")
+        mini_map_ocr = path.join(directories["temp"], f"{self.name}_mini_map_ocr.png")
+        actual_map_ocr_path_txt = mini_map_ocr.replace(path.splitext(mini_map_ocr)[1], ".txt")
+        # arrow_pos = pyautogui.locateOnWindow(files["actual_tour"], title=self.Leader.window.title, grayscale=True, region=regions["combat_mini"])
+        time.sleep(1)
+        pyautogui.moveTo(regions["center_mini_map"])
+        time.sleep(1)
+        pyautogui.screenshot(
+                imageFilename=mini_map_ocr,
+                region=regions["ocr_mini_map"],
+                allScreens=False)
+        viewer.read_img(mini_map_ocr)
+        read_actual_map_ocr_path(self, actual_map_ocr_path_txt)
+
+
+def read_actual_map_ocr_path(self, actual_map_ocr_path_txt):
+    if path.isfile(actual_map_ocr_path_txt):
+        try:
+            info = open(actual_map_ocr_path_txt, "r")
+                # print([info.readline().split(",")[0],info.readline().split(",")[-1]])
+                
+            pos = info.readline().split(",")
+                # = pos
+                # print(info.readline().split(","))
+            info.close()
+            self.position = [int(pos[0]),int(pos[1])]
+        
+        except Exception as e :
+            logging.debug(msg=f"la position de {self.name} a cause {e}")
+        
+
+
+        # info = open(actual_map_ocr_path_txt, "r")
+        # # print([info.readline().split(",")[0],info.readline().split(",")[-1]])
+        # pos = info.readline().split(",")
+        # # = pos
+        # # print(info.readline().split(","))
+        # info.close()
+        # self.Leader.position = [int(pos[0]),int(pos[1])]
 
 def fgo_and_vide_on_brak_bank(Perso):
     Perso.go_brak_bank()
