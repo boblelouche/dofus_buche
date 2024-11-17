@@ -13,6 +13,7 @@ from Script.inputs import wait_for_esc, wait_for_click
 import Script.ocr as viewer
 import pandas as pd
 import ast
+from Script.Player import Player
 
 from Script.utility import (
     make_image_hash,
@@ -30,7 +31,6 @@ class Dict2Obj(object):
         return "<dict2obj: %s>" % self.__dict__
 
 
-from .Player import Player
 
 # def myfun(d):
 #   for k, v in d.iteritems():
@@ -332,7 +332,7 @@ def follow(Groupe):
 # routine(Iro, [Lea])
 # print(Perso.window)
 # add_info_to_db()
-print(team["Ironamo"].name)
+# (team['Ironamo'].name)
 # allStar = Groupe(team['Ironamo'],[team['Laestra']])
 # allStar = Groupe(Iro, Lea)
 # allStar.gfollow()
