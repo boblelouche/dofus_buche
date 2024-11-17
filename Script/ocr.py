@@ -2,20 +2,14 @@
 import cv2
 import pytesseract
 from os import path
+from sys import platform
 
 # Mention the installed location of Tesseract-OCR in your system
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"  # In case using colab after installing above modules
+if platform == "windows":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"  # In case using colab after installing above modules
 
 
-# Set the tesseract config to recognize special characters
-def set_config():
-    global config
-    # config = '-c tessedit_char_whitelist=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZéèêç(),- --psm 6'
-    # config = '-c tessedit_char_whitelist=0123456789abc-:defghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZéèêç( ), --psm 6'
-    config = "-c tessedit_char_whitelist=01-,23456789 --psm 6"
-
-
-set_config()
+config = "-c tessedit_char_whitelist=01-,23456789 --psm 6"
 
 
 def read_img(picture_path):

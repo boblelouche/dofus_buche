@@ -1,13 +1,13 @@
 import pickle
 import concurrent.futures
-from os import path,remove
+from os import path, remove
 from shutil import copyfile
 import pyautogui
 import threading
 import time
 from imagehash import hex_to_hash
 import logging
-import Script.ocr as viewer 
+import Script.ocr as viewer
 from config import files, regions, directories
 from Script.inputs import wait_for_esc, wait_for_click
 import Script.ocr as viewer
@@ -19,13 +19,18 @@ from Script.utility import (
     get_map_name_picture,
     read_pkl,
 )
+
+
 class Dict2Obj(object):
     def __init__(self, dictionary):
         for key in dictionary:
             setattr(self, key, dictionary[key])
-    
+
     def __repr__(self):
         return "<dict2obj: %s>" % self.__dict__
+
+
+from .Player import Player
 
 # def myfun(d):
 #   for k, v in d.iteritems():
@@ -33,16 +38,16 @@ class Dict2Obj(object):
 #       d[k] = myfun(v)
 #     else:
 #       d[k] = f(v)
-#   return d     
+#   return d
 # df_monture = pd.read_csv(files["db_monture_csv"], sep=',',  encoding='utf-8')
-df_player = pd.read_csv(files["db_player_csv"], sep=',',  encoding='utf-8')
+df_player = pd.read_csv(files["db_player_csv"], sep=",", encoding="utf-8")
 # db = open(files["db_player"], "rb")
 # db = pd.read_csv()
 # Iro, Lea, Taz, Ket = pickle.load(db)
 # Iro = df_player[player.name]["__dict__"]["PA"]
 
 # for player in range(len(df_player.columns)):
-    # print(ast.literal_eval(df_player[player+1]) )
+# print(ast.literal_eval(df_player[player+1]) )
 team = {}
 # for perso in range(team) :
 
@@ -53,6 +58,8 @@ for player in df_player.columns[1:]:
     # print(ast.literal_eval(df_player[player][4]))
     # team.append(Dict2Obj(ast.literal_eval(df_player[player][4])))
     team[player] = Dict2Obj(ast.literal_eval(df_player[player][4]))
+
+
 # Lea = team["Laestra"]
 # print(team["Ironamo"].lvl)
 # print(team["Ironamo"]["position"])
@@ -61,7 +68,7 @@ for player in df_player.columns[1:]:
 # print(df_player["Ironamo"][0:5])
 #
 class Groupe:
-    def __init__(self, Leader, followers):
+    def __init__(self, Leader: Player, followers: list[Player]):
         self.Leader = Leader
         # self.followers = followers
         self.ended = False
@@ -78,14 +85,20 @@ class Groupe:
             follow(self)
             # print(self.ended)
             time.sleep(0.1)
-    
+
     def detect_pos_on_mini_map(self):
         if self.Leader.is_window_inactive():
             self.Leader.get_window()
         time.sleep(1)
-        mini_map_screenshot = path.join(directories["temp"], f"{self.Leader.name}_mini_map.png")
-        mini_map_ocr = path.join(directories["temp"], f"{self.Leader.name}_mini_map_ocr.png")
-        actual_map_ocr_path_txt = mini_map_ocr.replace(path.splitext(mini_map_ocr)[1], ".txt")
+        mini_map_screenshot = path.join(
+            directories["temp"], f"{self.Leader.name}_mini_map.png"
+        )
+        mini_map_ocr = path.join(
+            directories["temp"], f"{self.Leader.name}_mini_map_ocr.png"
+        )
+        actual_map_ocr_path_txt = mini_map_ocr.replace(
+            path.splitext(mini_map_ocr)[1], ".txt"
+        )
         # arrow_pos = pyautogui.locateOnWindow(files["actual_tour"], title=self.Leader.window.title, grayscale=True, region=regions["combat_mini"])
         time.sleep(1)
         pyautogui.moveTo(regions["center_mini_map"])
@@ -101,19 +114,18 @@ class Groupe:
             allScreens=False,
         )
         viewer.read_img(mini_map_ocr)
-        
+
         info = open(actual_map_ocr_path_txt, "r")
         # print([info.readline().split(",")[0],info.readline().split(",")[-1]])
         pos = info.readline().split(",")
         # = pos
         # print(info.readline().split(","))
         info.close()
-        self.Leader.position = [int(pos[0]),int(pos[1])]
-
+        self.Leader.position = [int(pos[0]), int(pos[1])]
 
     def detect_active_turn(self):
         if self.Leader.is_window_inactive():
-            self.Leader.get_window()
+            self.Leader.foreground()
         # arrow_pos = pyautogui.locateOnWindow(files["actual_tour"], title=self.Leader.window.title, grayscale=True, region=regions["combat_mini"])
         pyautogui.screenshot(
             imageFilename=path.join(directories["temp"], "testt.png"),
@@ -219,7 +231,7 @@ def detect_change_in_screenshot(Perso):
 
 def detect_map_change(Perso):
     if Perso.is_window_inactive():
-        Perso.get_window()
+        Perso.foreground()
     diff = make_image_hash(
         path.join(directories["temp"], f"actual_map_{Perso.name}.png")
     ) - make_image_hash(get_map_name_picture(Perso))
@@ -268,19 +280,19 @@ def follow(Groupe):
         #     # processes.append(executor.submit(detect_click_left_perso(Perso),Perso))
         #     # print(processes.append(executor.submit(detect_click_left_perso(Perso),Perso)))
         # while Groupe.ended == False:
-        Groupe.Leader.get_window()
+        Groupe.Leader.foreground()
         executor.submit(detect_click_left_perso(Groupe.Leader), Groupe.Leader)
         pyautogui.click(
             (Groupe.Leader.last_click_pos[0], Groupe.Leader.last_click_pos[1])
         )
         # time.sleep(0.1)
         for bot in Groupe.followers:
-            bot.get_window()
+            bot.foreground()
             time.sleep(0.2)
             pyautogui.click(
                 (Groupe.Leader.last_click_pos[0], Groupe.Leader.last_click_pos[1])
             )
-        Groupe.Leader.get_window()
+        Groupe.Leader.foreground()
         # executor.submit(detect_map_change(Groupe.Leader), Groupe.Leader)
         if detect_map_change(Groupe.Leader):
             print("map have change")
@@ -320,7 +332,7 @@ def follow(Groupe):
 # routine(Iro, [Lea])
 # print(Perso.window)
 # add_info_to_db()
-print(team['Ironamo'].name)
+print(team["Ironamo"].name)
 # allStar = Groupe(team['Ironamo'],[team['Laestra']])
 # allStar = Groupe(Iro, Lea)
 # allStar.gfollow()

@@ -19,28 +19,28 @@ from config import (
     combat_sound_file,
     resource_lists,
 )
-from .utility import (
-    click_and_confirm,
-    click_on_picture_once,
-    read_pkl
-)
-from .player_method import(
+from .utility import click_and_confirm, click_on_picture_once, read_pkl
+from .player_method import (
     fuse_brak_popo,
     fgo_brak_bank,
     fgo_and_vide_on_brak_bank,
     fvider_ressource_on_bank,
     fmove_map,
     ffind_actual_map,
-    fdetect_pos_on_mini_map
+    fdetect_pos_on_mini_map,
 )
 from .fight import fight
-class WindowNotFoundException(Exception):
-    pass
+from .window import Window
+
+
 class Player:
+    window: Window
+
     def __init__(
         self, name, PA, PM, sort, lvl, position, classe, metier, hash_name=None
     ):
-        self.window_title = f"{name} - Dofus Retro v{version}"
+        title = f"{name} - Dofus Retro v{version}"
+        # self.window_title = f"{name} - Dofus Retro v{version}"
         self.PA = PA
         self.PM = PM
         self.name = name
@@ -60,57 +60,29 @@ class Player:
         self.collecte_tour = 0
         self.variation = 0
         self.playing_time = False
-        # self.window = self.get_window()
-        self.window = None
+        # self.window = self.foreground()
+        self.window = Window(title)
         self.window_resolution = None
         self.last_click_pos = None
         self.color = colors["inventory_empty"]
         # self.is_window_inactive = self.is_window_inactiv()
 
-    def active_player(self):
-        try:
-            try:
-                # implementation
-                self.window.activate()
-            except Exception as e:
-                print(e)
-                if e.__class__.__name__ == "PyGetWindowException":
-                    # handle exception
-                    print("mini pb")
-                else:
-                    raise e
+    # def active_player(self):
 
-        except Exception as e:
-            print(e)
-            print("gros pb")
-        
+    def foreground(self):
+        self.window.foreground()
 
     def is_window_inactive(self):
-        active_window= gw.getActiveWindow()
-        return active_window is None or self.window is None or active_window.title != self.window_title 
-
-    def get_window(self):
-        try:
-            self.window = pwc.getWindowsWithTitle(self.window_title)[0]
-        except IndexError as e:
-            print(e)
-            raise WindowNotFoundException()
-            
-        self.active_player()
-        # self.window_resolution = self.window.resolution()
-        # 
-        logging.info(f"windows of {self.name} activated")
+        active_window = Window.get_active_window_title()
+        return (
+            active_window is None
+            or self.window is None
+            or active_window.title != self.window.title
+        )
 
     def logg_player(self):
-        dofus_window_lancher = f"Dofus Retro v{version}"
-        try:
-            dofus_launcher = pwc.getWindowsWithTitle(dofus_window_lancher)[0]
-        except IndexError as e:
-            print(e)
-            # raise
-            return "Not launched"
-        dofus_launcher.activate()
-        dofus_launcher.maximize()
+        self.window.foreground()
+        # dofus_launcher.maximize()
 
         pyautogui.click((936, 548))
         time.sleep(0.5)
@@ -144,9 +116,10 @@ class Player:
         # players.update()
         pickle.dump(players, d)
         d.close()
+
     def detect_pos_on_mini_map(self):
         fdetect_pos_on_mini_map(self)
-        
+
     def go_brak_bank(self):
         fgo_brak_bank(self)
 
@@ -158,7 +131,7 @@ class Player:
 
     def get_screenshot_region(self, region):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
         # if self.window is not None:
         time.sleep(1)
@@ -197,7 +170,7 @@ class Player:
     def detect_full_inventory(self):
         # global inventory_full
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
         self.detect_inventory_open()
         if self.inventory_open == 0:
@@ -223,7 +196,7 @@ class Player:
     def detect_inventory_75(self):
         # global inventory_full
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
         self.detect_inventory_open()
         if self.inventory_open == 0:
@@ -248,7 +221,7 @@ class Player:
 
     def detect_inventory_open(self):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
         time.sleep(1)
         try:
@@ -287,7 +260,7 @@ class Player:
 
     def follow_saved_road(self, road_name):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
             with open(files["saved_road"], "r") as file:
                 data = json.load(file)
@@ -299,7 +272,6 @@ class Player:
 
     def move_map(self, direction):
         return fmove_map(self, direction)
-
 
     def find_actual_map(self):
         return ffind_actual_map(self)
@@ -352,7 +324,7 @@ class Player:
 
     def deplacement(self, chemin):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
         for s in chemin:
             self.move_map(s)
 
@@ -385,7 +357,7 @@ class Player:
 
     def alamano(self, ressource_type):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
             it = 0
             while it < 3:
@@ -425,7 +397,7 @@ class Player:
 
     def add_ressource_position_on_map(self, ressource_type):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
             file_data = read_pkl(files["map_position_db"])
             for key in file_data:
@@ -465,7 +437,7 @@ class Player:
 
     def collecte_on_know_map(self, ressource_type):
         if self.is_window_inactive():
-            self.get_window()
+            self.foreground()
 
             file_data = read_pkl(files["map_position_db"])
             for key in file_data:
@@ -481,7 +453,7 @@ class Player:
 
     # def detect_full_inventory(self):
     # # global inventory_full
-    # dofus_window = get_window(self.name)
+    # dofus_window = foreground(self.name)
     # if dofus_window is not None:
     #     keyboard.press_and_release("i")
     #     time.sleep(0.5)
