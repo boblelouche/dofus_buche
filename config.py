@@ -41,32 +41,46 @@ directories = {
 # Define files
 files = {
     # "map_info": path.join(directories["map_info"],'name.json'),
-    "map_loading_picture": path.join(directories["photo"],'map_loading.png'),
-    "attack_case": path.join(directories["combat"],"mini_red_case.png"),
-    "full_sac_picture": path.join(directories["photo"],'inventaire_plein.png'),
-    "ton_inventaire": path.join(directories["photo"],'ton inventaire.png'),
-    "inv_res_des": path.join(directories["photo"],'inventaire_ressource_desactivate.png'),
-    "inv_div_des": path.join(directories["photo"],'inventaire_divers_desactivate.png'),
-    "full_dd_picture": path.join(directories["photo"],'dd_full.png'),
-    "picture_txt_end_figth": path.join(directories["photo"],'texte_fin_de_combat.png'),
-    "picture_txt_couper": path.join(directories["photo"],"couper.png"),
-    "enemy_on_this_position_picture": path.join(directories["photo"],"niveau.png"),
-    "zap_selector_picture": path.join(directories["zap"],"selector_zap.png"),
-    "zapy_div_des": path.join(directories["photo"],'zapy_Divers_desactivate.png'),
-    "zapy_div_act": path.join(directories["photo"],'zapy_Divers_activate.png'),
-    "zapy_arene": path.join(directories["photo"],'zapy_arene.png'),
-    "zapy_bank": path.join(directories["photo"],'zapy_bank.png'),
-    "actual_tour": path.join(directories["combat"],"player_miniature",'actual_tour.png'),
-    "actual_tour2": path.join(directories["combat"],"player_miniature",'actual_tour2.png'),
-    "actual_tour3": path.join(directories["combat"],"player_miniature",'actual_tour3.png'),
-    "connect": path.join(directories["photo"],'Se connecter.png'),
-    "db_player": path.join(root,"players.pkl"),
-    "map_position": path.join(directories["map_info"],"position.json"),
-    "map_position_db": path.join(directories["map_info"],"position.pkl"),
-    "pictures_db": path.join(root,"picture_db.pkl"),
-    "xy_cell":path.join(directories["map_info"],"xy_cell.json"),
-    "saved_road": path.join(directories["map_info"],'saved_road.json')
-    
+    "map_loading_picture": path.join(directories["photo"], "map_loading.png"),
+    "attack_case": path.join(directories["combat"], "mini_red_case.png"),
+    "full_sac_picture": path.join(directories["photo"], "inventaire_plein.png"),
+    "ton_inventaire": path.join(directories["photo"], "ton inventaire.png"),
+    "inv_res_des": path.join(
+        directories["photo"], "inventaire_ressource_desactivate.png"
+    ),
+    "inv_div_des": path.join(directories["photo"], "inventaire_divers_desactivate.png"),
+    "full_dd_picture": path.join(directories["photo"], "dd_full.png"),
+    "picture_txt_end_figth": path.join(directories["photo"], "texte_fin_de_combat.png"),
+    "picture_txt_couper": path.join(directories["photo"], "couper.png"),
+    "enemy_on_this_position_picture": path.join(directories["photo"], "niveau.png"),
+    "zap_selector_picture": path.join(directories["zap"], "selector_zap.png"),
+    "zapy_div_des": path.join(directories["photo"], "zapy_Divers_desactivate.png"),
+    "zapy_div_act": path.join(directories["photo"], "zapy_Divers_activate.png"),
+    "zapy_arene": path.join(directories["photo"], "zapy_arene.png"),
+    "zapy_bank": path.join(directories["photo"], "zapy_bank.png"),
+    "actual_tour": path.join(
+        directories["combat"], "player_miniature", "actual_tour.png"
+    ),
+    "actual_tour2": path.join(
+        directories["combat"], "player_miniature", "actual_tour2.png"
+    ),
+    "actual_tour3": path.join(
+        directories["combat"], "player_miniature", "actual_tour3.png"
+    ),
+    "connect": path.join(directories["photo"], "Se connecter.png"),
+    "db_player": path.join(root, "players.pkl"),
+    "db_player_json": path.join(root, "players.json"),
+    "db_player_csv": path.join(root, "players.csv"),
+    "db_map_position": path.join(root, "position.json"),
+    "db_map": path.join(root, "position.json"),
+    "db_monture_csv": path.join(root, "montures.csv"),
+    "map_position_db": path.join(directories["map_info"], "position.pkl"),
+    "map_position_new_db": path.join(directories["map_info"], "position.json"),
+    "pictures_db": path.join(root, "picture_db.pkl"),
+    "xy_cell": path.join(directories["map_info"], "xy_cell.json"),
+    "saved_road": path.join(directories["map_info"], "saved_road.json"),
+    "spells":path.join(directories["resource"], "spells.xml"),
+    "recolte":path.join(directories["resource"], "recolte.txt")
 }
 
 # Define colors
