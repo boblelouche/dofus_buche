@@ -249,11 +249,7 @@ def find_map_changer(window: Window):
     region_u = (left, top, width, height // 10)
     print(region)
 
-    #     2056 1291
-    # 1721 1291
-    # 1196 73 860 1246
-    # 1196
-    # {'l': (0, 0, 86, 1246), 'r': (774, 0, 86, 1246), 'd': (0, 912, 860, 124)}
+    # u = (left, top, width, height // 10)
     map_changer = {"l": (), "r": (), "d": (), "u": ()}
     keyboard.press("a")
     keyboard.release("a")

@@ -24,6 +24,6 @@ Lea = Player(
 
 Lea.detect_pos_on_mini_map()
 print(Lea.position)
-Lea.deplacement("u")
+Lea.deplacement("l")
 Lea.detect_pos_on_mini_map()
 print(Lea.position)

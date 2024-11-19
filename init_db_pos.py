@@ -2,7 +2,7 @@ import pandas as pd
 from config import files, directories
 import xml.etree.ElementTree as ET
 from os import listdir, path
-import ast
+
 
 class MapChanger:
     def __init__(self,Map_id) -> None:    

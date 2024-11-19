@@ -15,6 +15,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy import select
 # from sqlalchemy import dialects
 from sqlalchemy import Text
 from sqlalchemy.orm import Session
@@ -60,7 +61,8 @@ class Map(Base):
         back_populates="", cascade="all, delete-orphan"
     ) 
     def __repr__(self) -> str:
-        return f"Map(id={self.id}, type={self.type},x={self.x}, y={self.y}, longueur={self.longueur}, largeur={self.largeur})"
+        return f"Map(id={self.id},x={self.x}, y={self.y}, longueur={self.longueur}, largeur={self.largeur})"
+    
 
 class MapChanger(Base):
     __tablename__ = "map_changer"
@@ -153,13 +155,25 @@ Taz = Player2("Tazmany", 6, 3, "test", 52, [-25, 17], "cra", ["Paysan"])
 Ket = Player2("Ketawoman", 6, 3, "test", 2, [-2, -20], "osa", ["Paysan"])
 
 
-engine = create_engine(f"mariadb+mariadbconnector://{user}:{Password}@{Host}:{port}/{database}")
-Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
 
+def get_map_from_db(session,x,y):
+    r=session.scalars(select(Map)
+                      .where(Map.x==x)
+                      .where(Map.y==y))
+    return r
+                    #   )
+    # return f"select(Map).where(Map.x=={x}.where(Map.y=={y}))"
+    return Text(f"Map).where(Map.x=={x}))")
+
+engine = create_engine(f"mariadb+mariadbconnector://{user}:{Password}@{Host}:{port}/{database}")
+# Base.metadata.drop_all(engine)
+# Base.metadata.create_all(engine)
 with Session(engine) as session:
-    session.add_all([create_player(Iro),create_player(Lea),create_player(Ket),create_player(Taz)])
-    session.commit()
-    for file in listdir(directories["MAP_DIR"]):
-        add_xml(file, session)
-        
+
+    # session.add_all([create_player(Iro),create_player(Lea),create_player(Ket),create_player(Taz)])
+    # session.commit()
+    # for file in listdir(directories["MAP_DIR"]):
+        # add_xml(file, session)
+    r= get_map_from_db(session, 0,1)
+    for map in r :
+        print(map,"\n",map.map_changers)
