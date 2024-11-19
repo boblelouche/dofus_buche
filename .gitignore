@@ -5,4 +5,9 @@ __pycache__/
 LeafMITM
 *.pkl
 **/*.pkl
+*.csv
 Script/FindObjects.py
+son/*
+map_info/maps/*
+DATA/*
+.env
