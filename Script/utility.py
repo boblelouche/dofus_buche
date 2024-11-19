@@ -4,10 +4,10 @@ from config import path, directories, regions, files
 from PIL import Image
 from imagehash import phash
 from math import sqrt
-from .json_utility import read_pkl, update_pkl
+from Script.json_utility import read_pkl, update_pkl
 import json
 import logging
-from .inputs import wait_for_click, wait_for_esc
+from Script.inputs import wait_for_click, wait_for_esc
 from pynput import mouse
 from mss import mss
 import pytesseract

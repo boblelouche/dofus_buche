@@ -123,6 +123,22 @@ def compare_picture():
     #     json.dump(file_data, file, indent=4)
     # print(type(value), value)
     # print(key, value)
-
-
-print(detect_click_left())
+map_cell ={
+    (0,0):(910,440),
+    (0,1):(972,411),
+    (0,3):(1056,361),
+    (0,4):(1102,300),
+    (0,-2):(870,480),
+    (1,0):(960,462),
+    (-1,0):(867,410),
+    (-1,1):(909,391)
+}
+xoffset=28
+yoffset=28
+def get_pos_from_cell(x,y):
+    pixel_x = 910 + (x*xoffset + y*yoffset) 
+    pixel_y = 440 + (x*xoffset - y*yoffset)
+    print(pixel_x,pixel_y)   # grid_positions[(x, y)] = (sqrt(pixel_x**2), sqrt(pixel_y**2))
+    return (pixel_x,pixel_y)   # grid_positions[(x, y)] = (sqrt(pixel_x**2), sqrt(pixel_y**2))
+# print(detect_click_left())
+pyautogui.moveTo(get_pos_from_cell(0,4))
