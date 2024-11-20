@@ -425,7 +425,8 @@ def locate_in_picture(haystack, needle_path):
         needleGray = cv.cvtColor(np.array(needle.astype(np.float32)), cv.COLOR_RGB2GRAY)
         result = cv.matchTemplate(scGray, needleGray, method)
         minVal, maxVal, minLoc, maxLoc = cv.minMaxLoc(result)
-        print("method", method, minVal, maxVal, minLoc, maxLoc)
+        print("method",needle_path, method, minVal, maxVal, minLoc, maxLoc)
+        # pyautogui.screenshot()
         res.append((minVal, maxVal, minLoc, maxLoc))
     return res
 
@@ -466,7 +467,7 @@ def fmove_map(Perso, direction):
                     return
 
     logging.info(f"{Perso.position} not in db")
-    # Perso.actual_map_key = ffind_actual_map(Perso)
+    Perso.actual_map_key = ffind_actual_map(Perso)
     file_data = read_pkl(files["map_position_db"])
     pos = file_data[Perso.actual_map_key]["map_changer"][direction]
     logging.info(f"{pos} will be clicked")
