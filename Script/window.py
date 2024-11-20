@@ -24,6 +24,30 @@ def compute_biggest_ratio_rectangle(width, height):
 
 
 class Window:
+
+    def __init__(self, title: str):
+            self.title = title
+            if sys.platform == "darwin":
+                self.window = Window.get_window_by_title(title)
+                self.app = Window.get_app_by_pid(self.window["kCGWindowOwnerPID"])
+                bounds = self.window["kCGWindowBounds"]
+                self.height = int(bounds["Height"])
+                self.width = int(bounds["Width"])
+                self.left = int(bounds["X"])
+                self.top = int(bounds["Y"])
+            else:
+                try:
+                    self.window = pwc.getWindowsWithTitle(self.title)[0]
+                except IndexError as e:
+                    print(e)
+                    raise WindowNotFoundException()
+                self.width = self.window.width
+                self.height = self.window.height
+                self.left = self.window.left
+                self.top = self.window.top
+            self.chat_bar_height = int(0.2165 * self.height)
+
+
     def get_game_bounds(self):
         (play_box_width, play_box_height) = compute_biggest_ratio_rectangle(
             self.width, self.height - 35
@@ -74,19 +98,6 @@ class Window:
                 raise WindowNotFoundException()
 
             return searched_app
-
-        def __init__(self, title: str):
-            self.title = title
-
-            self.window = Window.get_window_by_title(title)
-            self.app = Window.get_app_by_pid(self.window["kCGWindowOwnerPID"])
-            bounds = self.window["kCGWindowBounds"]
-            self.height = int(bounds["Height"])
-            self.width = int(bounds["Width"])
-            self.left = int(bounds["X"])
-            self.top = int(bounds["Y"])
-            self.chat_bar_height = int(0.2165 * self.height)
-
         def foreground(self):
             return self.app.activateWithOptions_(True)
 
@@ -112,18 +123,6 @@ class Window:
         @staticmethod
         def get_active_window_title():
             return pgw.getActiveWindowTitle()
-
-        def __init__(self, title: str):
-            self.title = title
-            try:
-                self.window = pwc.getWindowsWithTitle(self.window_title)[0]
-            except IndexError as e:
-                print(e)
-                raise WindowNotFoundException()
-            self.width = self.window.width
-            self.height = self.window.height
-            self.left = self.window.left
-            self.top = self.window.top
 
         def foreground(self):
             self.window.activate()

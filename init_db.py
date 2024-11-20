@@ -174,6 +174,6 @@ with Session(engine) as session:
     # session.commit()
     # for file in listdir(directories["MAP_DIR"]):
         # add_xml(file, session)
-    r= get_map_from_db(session, 0,1)
+    r= get_map_from_db(session, 26,-37)
     for map in r :
         print(map,"\n",map.map_changers)
