@@ -1,47 +1,13 @@
-# # from sqlalchemy import create_engine
-# import sqlalchemy
-# from sqlalchemy.ext.declarative import declarative_base
-
-# engine = create_engine("sqlite://", echo=True)
-
-
 from sql_connect import  user, Password, Host, database,port
-from typing import List
-from typing import Optional
-from sqlalchemy import ForeignKey
-from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
-from sqlalchemy import select
-# from sqlalchemy import dialects
-from sqlalchemy import Text
-from sqlalchemy.orm import Session
-from Script.Player2 import Player2
+from typing import List, Optional, ClassVar
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship, Session
+from sqlalchemy import select, Text, create_engine, ForeignKey, String
 from config import directories
-from os import listdir, path
+from os import path
 import xml.etree.ElementTree as ET
-import json
+from Cell import Cell
 
 
-class Map2:
-    def __init__(self,id,longueur,largeur,x,y,data) -> None:
-        self.x=x
-        self.y=y
-        self.position =  [int(self.x),int(self.y)]
-        self.MAPA_DATA = data
-        self.ID = id
-        self.hash = None
-        self.largeur = largeur
-        self.longueur = longueur
-        self.object = None
-        self.map_changer = MapChanger(self.ID)
-
-    def get_hash(self):
-        return "hash"
-    
 class Base(DeclarativeBase):
     pass
 
@@ -55,6 +21,7 @@ class Map(Base):
     hash:Mapped[Optional[str]] = mapped_column(String(20))
     largeur:Mapped[int]
     longueur: Mapped[int]
+    cells : ClassVar[list[Cell]]
     # object = None
     # clickable = 
     map_changers:Mapped[List["MapChanger"]] = relationship(
@@ -63,6 +30,34 @@ class Map(Base):
     def __repr__(self) -> str:
         return f"Map(id={self.id},x={self.x}, y={self.y}, longueur={self.longueur}, largeur={self.largeur})"
     
+    
+    def get_map_info(self):
+        raw_cells = [self.MAPA_DATA[i : i + 10] for i in range(0, len(self.MAPA_DATA), 10)]
+        self.cells = [Cell(raw_cells[i], i) for i in range(len(raw_cells))]
+
+
+
+    def display_cells(self):
+        i = 15
+        line_number = 0
+        # print(len(self.cells))
+        while i < len(self.cells) - 15:
+            # print(i)
+            if line_number % 2 == 0:
+                for j in range(0, 14):
+                    # print(i + j)
+                    self.cells[i + j].print()
+                    print(" ", end="")
+                i += 14
+            else:
+                print(" ", end="")
+                for j in range(1, 14):
+                    # print(i + j)
+                    self.cells[i + j].print()
+                    print(" ", end="")
+                i += 15
+            line_number += 1
+            print("")
 
 class MapChanger(Base):
     __tablename__ = "map_changer"
@@ -97,83 +92,28 @@ class Player(Base):
     def __repr__(self)-> str:
         return f"Player(id={self.id}, PM={self.PM}, PA={self.PA}, name={self.name}, lvl={self.lvl} )"
     
-print("ok")
-
-def create_player(player):
-    return Player(
-        name=player.name,
-        PM = player.PM,
-        PA = player.PA,
-        lvl = player.lvl,
-        metier=  json.dumps(player.metier),
-        classe = player.classe,
-        )
-
-def create_map(map):
-    return Map(
-    x=map.x,
-    y=map.y,
-    MAPA_DATA= map.MAPA_DATA,
-    hash= map.hash,
-    largeur= map.largeur,
-    longueur= map.longueur
-    # map_changer= map.map_changer 
-    )
 
 def add_xml(file, session):
-        # add_xmlinfo(path.join(directories["MAP_DIR"],file))
         tree = ET.parse(path.join(directories["MAP_DIR"],file))
         root = tree.getroot()
-        # print(root[2].text)
-        M4 = Map2(root[0].text, root[1].text, root[2].text, root[3].text, root[4].text, root[5].text)
-        session.add(create_map(M4))
+        map = Map(longueur=root[1].text, largeur=root[2].text, x=root[3].text, y=root[4].text, MAPA_DATA=root[5].text)
+        session.add(map)
         session.commit()
-
-Iro = Player2(
-    "Ironamo",
-    8,
-    3,
-    "test",
-    101,
-    [21, -26],
-    "enutrof",
-    ["bucheron", "mineur"],
-    hash_name="fa958560613e959d",
-)
-Lea = Player2(
-    "Laestra",
-    6,
-    3,
-    "test",
-    52,
-    [-25, 17],
-    "iop",
-    ["Bijoutier"],
-    hash_name="e89d9562c6799d84",
-)
-Taz = Player2("Tazmany", 6, 3, "test", 52, [-25, 17], "cra", ["Paysan"])
-Ket = Player2("Ketawoman", 6, 3, "test", 2, [-2, -20], "osa", ["Paysan"])
-
 
 
 def get_map_from_db(session,x,y):
-    r=session.scalars(select(Map)
+    r=session.scalar(select(Map)
                       .where(Map.x==x)
                       .where(Map.y==y))
     return r
-                    #   )
-    # return f"select(Map).where(Map.x=={x}.where(Map.y=={y}))"
-    return Text(f"Map).where(Map.x=={x}))")
+
 
 engine = create_engine(f"mariadb+mariadbconnector://{user}:{Password}@{Host}:{port}/{database}")
 # Base.metadata.drop_all(engine)
 # Base.metadata.create_all(engine)
 with Session(engine) as session:
-
-    # session.add_all([create_player(Iro),create_player(Lea),create_player(Ket),create_player(Taz)])
-    # session.commit()
-    # for file in listdir(directories["MAP_DIR"]):
-        # add_xml(file, session)
-    r= get_map_from_db(session, 26,-37)
-    for map in r :
-        print(map,"\n",map.map_changers)
+    map= get_map_from_db(session, 26,-37)
+    map.get_map_info()
+    
+    map.display_cells()
+  
