@@ -1,10 +1,21 @@
-from os import path, getcwd
+from os import path, getcwd, getenv
+from dotenv import load_dotenv
+
+load_dotenv()
 
 root = getcwd()
 combat_sound_file = path.join(root, "son", "PULSE.mp3")
 harvest_time = 12
 version = "1.44.5"
 temps_enemy = 8
+
+db = {
+    "user": getenv("MARIADB_USER"),
+    "password": getenv("MARIADB_PASSWORD"),
+    "host": getenv("MARIADB_HOST"),
+    "port": getenv("MARIADB_PORT", "3306"),
+    "database": getenv("MARIADB_DATABASE"),
+}
 
 DEPLACEMENT_TIMING_RUN = {"horizontal": 0.3, "vertical": 0.2, "diagonal": 0.2}
 DEPLACEMENT_TIMING_WALK = {"horizontal": 0.75, "vertical": 0.5, "diagonal": 0.5}

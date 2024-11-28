@@ -1,29 +1,12 @@
 # from Script.utility import save_road
-from Script.Player import Player
+from models.Player import Player
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-# anonway = Player("Anonway", 9, 5, "test", 85, [1, 0], "sacri", ["Paysan", "Boulanger"])
+anonway = Player(
+    name="Anonway", PA=9, PM=6, lvl=85, classe="sacri", metier=["Paysan", "Boulanger"]
+)
 
-# anonway.deplacement("dlr")
-# anonway = Player("Anonway", 9, 5, "test", 85, [1, 0], "sacri", ["Paysan", "Boulanger"])
-Lea = Player(
-        "Ironamo",
-        8,
-        3,
-        "test",
-        101,
-        [4, -17],
-        "enutrof",
-        ["bucheron", "mineur"],
-        hash_name="fa958560613e959d",
-        actual_map_key = 10001
-
-    )
-
-# Lea.detect_pos_on_mini_map()
-# print(Lea.position)
-Lea.deplacement("ldru")
-# Lea.detect_pos_on_mini_map()
-# print(Lea.position)
+anonway.setup((-2, 0))
+anonway.deplacement("drul")
