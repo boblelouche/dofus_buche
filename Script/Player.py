@@ -30,14 +30,24 @@ from .player_method import (
     fdetect_pos_on_mini_map,
 )
 from .fight import fight
-from .window import Window
+from models.Window import Window
 
 
 class Player:
     window: Window
 
     def __init__(
-        self, name, PA, PM, sort, lvl, position, classe, metier, hash_name=None,actual_map_key=None 
+        self,
+        name,
+        PA,
+        PM,
+        sort,
+        lvl,
+        position,
+        classe,
+        metier,
+        hash_name=None,
+        actual_map_key=None,
     ):
         title = f"{name} - Dofus Retro v{version}"
         # self.window_title = f"{name} - Dofus Retro v{version}"
@@ -276,7 +286,6 @@ class Player:
     def find_actual_map(self):
         return ffind_actual_map(self)
 
-    
     def deplacement(self, chemin):
         if self.is_window_inactive():
             self.foreground()

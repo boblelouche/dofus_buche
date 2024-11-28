@@ -1,5 +1,6 @@
-services:
 
+
+services:
   db:
     image: mariadb
     restart: always
@@ -9,16 +10,16 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
-        - ./DATA/:/var/lib/mysql/
+        - ./docker/mariadb:/var/lib/mysql/
     ports:
-      - 3306:3306
+      - ${MARIDB_PORT:-3306}:3306
 
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
-  
+      - ${ADMINER_PORT:-8080}:8080
+
 
 
 

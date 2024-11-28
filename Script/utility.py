@@ -13,7 +13,7 @@ from mss import mss
 import pytesseract
 import cv2
 import numpy as np
-from .window import Window
+from models.Window import Window
 import Script.ocr as viewer
 
 
@@ -109,7 +109,7 @@ def confirm_map_change(window: Window, timeout: int = 6):
     while time.time() - start_time < timeout:
         try:
             viewer
-            (left, top, width, height) = window.get_game_bounds()
+            (left, top, width, height) = window.game_bounds
             screenshot_path = path.join(directories["temp"], "search_load.png")
             # mss().save(output=screenpath)
             screenshot = pyautogui.screenshot(

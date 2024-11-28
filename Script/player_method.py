@@ -20,7 +20,7 @@ from pynput.keyboard import Controller
 from os import path, rename
 import logging
 from config import regions
-from .window import Window
+from models.Window import Window
 import Script.ocr as viewer
 import sys
 
@@ -236,7 +236,7 @@ def ffind_actual_map(Perso):
 def find_map_changer(window: Window):
     # Perso.foreground()
     # if Perso.window is not None:
-    (left, top, width, height) = window.get_game_bounds()
+    (left, top, width, height) = window.game_bounds
     if sys.platform != "darwin":
         top = top + 35
         height = height - 35
@@ -425,8 +425,7 @@ def locate_in_picture(haystack, needle_path):
         needleGray = cv.cvtColor(np.array(needle.astype(np.float32)), cv.COLOR_RGB2GRAY)
         result = cv.matchTemplate(scGray, needleGray, method)
         minVal, maxVal, minLoc, maxLoc = cv.minMaxLoc(result)
-        print("method",needle_path, method, minVal, maxVal, minLoc, maxLoc)
-        # pyautogui.screenshot()
+
         res.append((minVal, maxVal, minLoc, maxLoc))
     return res
 

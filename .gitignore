@@ -13,3 +13,4 @@ DATA
 .env
 .DS_Store
 pyswf
+docker/*
